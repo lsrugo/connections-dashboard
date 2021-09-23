@@ -22,11 +22,21 @@ function importConnections(file) {
     header: true,
     beforeFirstChunk: (chunk) => {
       if (chunk.startsWith(startingString)) {
-        return chunk.slice(startingString.length - 1);
+        return chunk.slice(startingString.length);
       }
     },
     complete: (results) => {
       console.log(results);
+
+      supabase.from('Connections')
+        .insert(results.data)
+        .then(res => {
+          if (res.error) {
+            console.error(res.error)
+          } else {
+            console.log('success', res.data)
+          }
+        })
     }
   });
 }
