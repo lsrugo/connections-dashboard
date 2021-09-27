@@ -3,15 +3,24 @@
   <head>
     <title>Connections Dashboard</title>
     <link rel="stylesheet" href="/src/styles.css" />
+    <link rel="stylesheet" href="/tailwind.css" />
     <meta charset="UTF-8" />
   </head>
 
   <body>
-    <h1>Connections Dashboard</h1>
-
-    <label for="import">Import Connections</label>
+    <h1 class="text-2xl font-bold m-2">Connections Dashboard</h1>
+    
+    <label for="import" class="text-lg m-2">Import Connections</label>
     <input type="file" id="import" />
-
-    <script src="src/index.js"></script>
+    
+    <div id="message"></div>
+    <!-- flex container with all the charts -->
+    <div>
+      <div class="w-1/3">
+        <canvas id="positionsChart"></canvas>
+      </div>    
+    </div>
+    
+    <script type="module" src="src/index.js"></script>
   </body>
 </html>
