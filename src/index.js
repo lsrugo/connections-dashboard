@@ -1,14 +1,13 @@
-import { createClient } from "@supabase/supabase-js";
-import Chart from "chart.js/auto";
+/*global supabase, Chart, randomColor*/
 import Papa from "papaparse";
 
 const API_URL = "https://uzuarjwobeobconcjdkb.supabase.co";
 const ANON_KEY =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTYzMjA5MjUwMSwiZXhwIjoxOTQ3NjY4NTAxfQ.wcnGs329dCulDLOTPcLpEEY8zDREbXi-9mXduoq8npQ";
-const supabase = createClient(API_URL, ANON_KEY);
+const supabaseClient = supabase.createClient(API_URL, ANON_KEY);
 
 async function signIn(email, password) {
-  const { user, error } = await supabase.auth.signIn({
+  const { user, error } = await supabaseClient.auth.signIn({
     email: email,
     password: password
   })
@@ -19,7 +18,7 @@ async function signIn(email, password) {
   }
 }
 
-supabase.auth.onAuthStateChange((event, session) => {
+supabaseClient.auth.onAuthStateChange((event, session) => {
   console.log(event, session)
   if (event === "SIGNED_IN") {
     console.log('signed in as', session.user.email);
@@ -37,7 +36,7 @@ loadConnections()
 // load connections for current user
 async function loadConnections() {
   // TODO make this more specific
-  const { data, error } = await supabase.from('Connections').select('Position');
+  const { data, error } = await supabaseClient.from('Connections').select('Position');
 
   if (error) {
     console.error(error);
@@ -78,11 +77,12 @@ function createPositionsChart(data) {
     } else if (position.includes('founder')) {
       position = 'Founder' // maybe don't need this one
     } else {
-      // position = 'Other'
+      position = 'Other'
     }
     positions[position] ? positions[position] += 1 : positions[position] = 1;
   }
 
+  // TODO: add popup to expand 'other'
   console.log(positions)
 
   const labelsList = []
@@ -101,15 +101,17 @@ function createPositionsChart(data) {
   console.log('number of positons', numbersList.length)
   console.log('number of connections', data.length)
 
+  const colors = randomColor({
+    count: numbersList.length
+  })
+
   const chartData = {
     labels: labelsList,
     datasets: [
       {
         label: 'Positions',
         data: numbersList,
-        backgroundColor: function () {
-          return '#' + Math.floor(Math.random()*16777215).toString(16);
-        }
+        backgroundColor: colors
       }
     ]
   }
@@ -119,7 +121,7 @@ function createPositionsChart(data) {
     data: chartData
   }
 
-  const positionsChart = new Chart(
+  new Chart(
     document.getElementById('positionsChart'),
     config
   );
@@ -148,7 +150,7 @@ function importConnections(file) {
     complete: (results) => {
       console.log(results);
 
-      supabase.from('Connections')
+      supabaseClient.from('Connections')
         .insert(results.data)
         .then(res => {
           if (res.error) {
