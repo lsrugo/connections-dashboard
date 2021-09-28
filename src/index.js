@@ -31,12 +31,15 @@ signIn('lsrugo@hotmail.com', '123456');
 
 loadConnections()
   .then(createPositionsChart)
+  .then(createDatesChart)
   .then(() => document.querySelector('#message').textContent = '')
 
 // load connections for current user
 async function loadConnections() {
   // TODO make this more specific
-  const { data, error } = await supabaseClient.from('Connections').select('Position');
+  const { data, error } = await supabaseClient
+    .from('Connections')
+    .select('Position, "Connected On"');
 
   if (error) {
     console.error(error);
@@ -125,6 +128,63 @@ function createPositionsChart(data) {
     document.getElementById('positionsChart'),
     config
   );
+
+  // pass original data to next function
+  return data
+}
+
+function createDatesChart(data) {
+  const dates = {}
+
+  console.log(data)
+
+  // count number of connections for each date
+  for (const item of data) {
+    const date = item['Connected On']
+    dates[date] ? dates[date] += 1 : dates[date] = 1;
+  }
+
+  console.log(dates)
+
+  const labelsList = []
+  const numbersList = []
+
+  // TODO: sort dates list?
+  // const datesList = Object.entries(dates).sort()
+
+  // reformat to fit chart
+  for (const [key, value] of Object.entries(dates)) {
+    labelsList.push(key)
+    numbersList.push(value)
+  }
+
+  const colors = randomColor({
+    count: numbersList.length
+  })
+
+  const chartData = {
+    labels: labelsList,
+    datasets: [
+      {
+        label: 'Connections',
+        data: numbersList,
+        backgroundColor: colors
+      }
+    ]
+  }
+
+  const config = {
+    type: 'bar',
+    data: chartData
+  }
+
+  new Chart(
+    document.getElementById('datesChart'),
+    config
+  );
+
+  // pass original data to next function
+  return data
 }
 
 // handle importing csv
