@@ -138,15 +138,14 @@ function createDatesChart(data) {
 
   console.log(data)
 
-  const options = { month: 'long', year: 'numeric' };
+  const options = { month: 'long', year: 'numeric', timeZone: 'UTC' };
   const dateFormatter = new Intl.DateTimeFormat('en-US', options);
 
   // count number of connections for each month
   for (const item of data) {
     const rawDate = item['Connected On']
     const date = new Date(rawDate)
-    // TODO: figure out time zone issues
-    date.setDate(1) // set all dates to first of month
+    date.setUTCDate(1) // set all dates to first of month
     const dateString = date.toISOString()
 
     dates[dateString] ? dates[dateString] += 1 : dates[dateString] = 1;
