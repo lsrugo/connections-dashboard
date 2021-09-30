@@ -138,10 +138,18 @@ function createDatesChart(data) {
 
   console.log(data)
 
-  // count number of connections for each date
+  const options = { month: 'long', year: 'numeric' };
+  const dateFormatter = new Intl.DateTimeFormat('en-US', options);
+
+  // count number of connections for each month
   for (const item of data) {
-    const date = item['Connected On']
-    dates[date] ? dates[date] += 1 : dates[date] = 1;
+    const rawDate = item['Connected On']
+    const date = new Date(rawDate)
+    // TODO: figure out time zone issues
+    date.setDate(1) // set all dates to first of month
+    const dateString = date.toISOString()
+
+    dates[dateString] ? dates[dateString] += 1 : dates[dateString] = 1;
   }
 
   console.log(dates)
@@ -156,7 +164,8 @@ function createDatesChart(data) {
 
   // reformat to fit chart
   for (const [key, value] of datesList) {
-    labelsList.push(key)
+    // format date to month + year
+    labelsList.push(dateFormatter.format(Date.parse(key)))
     numbersList.push(value)
   }
 
