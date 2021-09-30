@@ -149,11 +149,13 @@ function createDatesChart(data) {
   const labelsList = []
   const numbersList = []
 
-  // TODO: sort dates list?
-  // const datesList = Object.entries(dates).sort()
+  // sort dates list
+  const datesList = Object.entries(dates).sort((a, b) => {
+    return new Date(a[0]) - new Date(b[0])
+  })
 
   // reformat to fit chart
-  for (const [key, value] of Object.entries(dates)) {
+  for (const [key, value] of datesList) {
     labelsList.push(key)
     numbersList.push(value)
   }
