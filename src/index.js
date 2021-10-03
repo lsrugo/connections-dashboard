@@ -32,6 +32,7 @@ signIn('lsrugo@hotmail.com', '123456');
 loadConnections()
   .then(createPositionsChart)
   .then(createDatesChart)
+  .then(createCompaniesList)
   .then(() => document.querySelector('#message').textContent = '')
 
 // load connections for current user
@@ -39,7 +40,7 @@ async function loadConnections() {
   // TODO make this more specific
   const { data, error } = await supabaseClient
     .from('Connections')
-    .select('Position, "Connected On"');
+    .select('Position, Company, "Connected On"');
 
   if (error) {
     console.error(error);
@@ -192,6 +193,39 @@ function createDatesChart(data) {
     document.getElementById('datesChart'),
     config
   );
+
+  // pass original data to next function
+  return data
+}
+
+function createCompaniesList(data) {
+  const companies = {}
+
+  for (const item of data) {
+    const co = item['Company']
+    // const co = item['Company'].toLowerCase()
+    if (co === '') {
+      continue
+    }
+    companies[co] ? companies[co] += 1 : companies[co] = 1;
+  }
+
+  // sort companies highest to lowest and take top 10
+  const companiesList = Object.entries(companies).sort((a, b) => b[1] - a[1]).slice(0, 10)
+  console.log('top 10 companies', companiesList)
+
+  // TODO add li to page
+  const table = document.querySelector('#companies-list')
+  for (const co of companiesList) {
+    const row = document.createElement('tr')
+    const coName = document.createElement('td')
+    coName.textContent = co[0]
+    const coNum = document.createElement('td')
+    coNum.textContent = co[1]
+    coNum.classList.add('text-center')
+    row.append(coName, coNum)
+    table.append(row)
+  }
 
   // pass original data to next function
   return data
