@@ -30,9 +30,11 @@ supabaseClient.auth.onAuthStateChange((event, session) => {
 signIn('lsrugo@hotmail.com', '123456');
 
 loadConnections()
-  .then(createPositionsChart)
-  .then(createDatesChart)
-  .then(createCompaniesList)
+  .then(data => {
+    createPositionsChart(data)
+    createDatesChart(data)
+    createCompaniesList(data)
+  })
   .then(() => document.querySelector('#message').textContent = '')
 
 // load connections for current user
@@ -129,9 +131,6 @@ function createPositionsChart(data) {
     document.getElementById('positionsChart'),
     config
   );
-
-  // pass original data to next function
-  return data
 }
 
 function createDatesChart(data) {
@@ -193,9 +192,6 @@ function createDatesChart(data) {
     document.getElementById('datesChart'),
     config
   );
-
-  // pass original data to next function
-  return data
 }
 
 function createCompaniesList(data) {
@@ -214,7 +210,6 @@ function createCompaniesList(data) {
   const companiesList = Object.entries(companies).sort((a, b) => b[1] - a[1]).slice(0, 10)
   console.log('top 10 companies', companiesList)
 
-  // TODO add li to page
   const table = document.querySelector('#companies-list')
   for (const co of companiesList) {
     const row = document.createElement('tr')
@@ -227,8 +222,7 @@ function createCompaniesList(data) {
     table.append(row)
   }
 
-  // pass original data to next function
-  return data
+  // TODO enable show more and show less buttons for top 25 and 100
 }
 
 // handle importing csv
