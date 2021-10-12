@@ -9,8 +9,8 @@ const supabaseClient = supabase.createClient(API_URL, ANON_KEY);
 supabaseClient.auth.onAuthStateChange((event, session) => {
   console.log(event, session)
   if (event === "SIGNED_OUT") {
-      // TODO change this to url of home page
-      window.location.href = '/login.html'
+    // TODO change this to url of home page
+    window.location.href = '/login.html'
   }
 })
 
@@ -131,120 +131,60 @@ function createPositionsChart(data) {
 function createDatesChart(data) {
   const dates = {}
 
-  console.log(data)
-
-  const options = { month: 'long', year: 'numeric', timeZone: 'UTC' };
-  const dateFormatter = new Intl.DateTimeFormat('en-US', options);
+  // const options = { month: 'long', timeZone: 'UTC' };
+  // const dateFormatter = new Intl.DateTimeFormat('en-US', options);
 
   // count number of connections for each month
   for (const item of data) {
-    const rawDate = item['Connected On']
-    const date = new Date(rawDate)
-    date.setUTCDate(1) // set all dates to first of month
-    const dateString = date.toISOString()
+    const date = new Date(item['Connected On'])
+    const year = date.getFullYear()
+    const month = date.getUTCMonth()
 
-    dates[dateString] ? dates[dateString] += 1 : dates[dateString] = 1;
+    // create array for that year if it does not exist
+    if (dates[year] === undefined) {
+      dates[year] = []
+    }
+
+    dates[year][month] ? dates[year][month] += 1 : dates[year][month] = 1;
   }
 
-  console.log(dates)
+  console.log('dates array', dates)
 
-  const labelsList = []
-  const numbersList = []
+  const datasets = []
 
-  // sort dates list
-  const datesList = Object.entries(dates).sort((a, b) => {
-    return new Date(a[0]) - new Date(b[0])
-  })
+  const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 
   // reformat to fit chart
-  for (const [key, value] of datesList) {
-    // format date to month + year
-    labelsList.push(dateFormatter.format(Date.parse(key)))
-    numbersList.push(value)
-  }
-
-  const chartData = {
-    labels: labelsList,
-    datasets: [
-      {
-        label: 'Connections',
-        data: numbersList,
-        backgroundColor: "#4c51bf",
-        borderColor: "#4c51bf",
-      }
-    ]
+  for (const [year, yearList] of Object.entries(dates)) {
+    // TODO: use set colors
+    const color = randomColor()
+    datasets.push({
+      label: String(year),
+      data: yearList,
+      backgroundColor: color,
+      borderColor: color
+    })
   }
 
   // TODO: fix config
   const config = {
     type: 'line',
-    data: chartData,
+    data: {
+      labels: months,
+      datasets: datasets
+    },
     options: {
-      title: {
-        display: true,
-        text: "New Connections",
-        fontColor: "black"
+      elements: {
+        line: {
+          tension: 0.4,
+        }
       },
-      legend: {
-        labels: {
-          fontColor: "white"
-        },
-        align: "end",
-        position: "bottom"
-      },
-      tooltips: {
-        mode: "index",
-        intersect: false
-      },
-      hover: {
-        mode: "nearest",
-        intersect: true
-      },
-      scales: {
-        xAxes: [
-          {
-            ticks: {
-              fontColor: "rgba(255,255,255,.7)"
-            },
-            display: true,
-            scaleLabel: {
-              display: false,
-              labelString: "Month",
-              fontColor: "white"
-            },
-            gridLines: {
-              display: false,
-              borderDash: [2],
-              borderDashOffset: [2],
-              color: "rgba(33, 37, 41, 0.3)",
-              zeroLineColor: "rgba(0, 0, 0, 0)",
-              zeroLineBorderDash: [2],
-              zeroLineBorderDashOffset: [2]
-            }
-          }
-        ],
-        yAxes: [
-          {
-            ticks: {
-              fontColor: "rgba(255,255,255,.7)"
-            },
-            display: true,
-            scaleLabel: {
-              display: false,
-              labelString: "Value",
-              fontColor: "white"
-            },
-            gridLines: {
-              borderDash: [3],
-              borderDashOffset: [3],
-              drawBorder: false,
-              color: "rgba(255, 255, 255, 0.15)",
-              zeroLineColor: "rgba(33, 37, 41, 0)",
-              zeroLineBorderDash: [2],
-              zeroLineBorderDashOffset: [2]
-            }
-          }
-        ]
+      plugins: {
+        legend: {
+          display: true,
+          position: 'bottom',
+          align: 'end'
+        }
       }
     }
   }
