@@ -1,4 +1,6 @@
+/*global module*/
 module.exports = {
+  mode: 'jit',
   purge: [
     './**/*.html',
     './src/**/*.js'
