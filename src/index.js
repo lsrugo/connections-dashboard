@@ -6,51 +6,46 @@ const ANON_KEY =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTYzMjA5MjUwMSwiZXhwIjoxOTQ3NjY4NTAxfQ.wcnGs329dCulDLOTPcLpEEY8zDREbXi-9mXduoq8npQ";
 const supabaseClient = supabase.createClient(API_URL, ANON_KEY);
 
-async function signIn(email, password) {
-  const { user, error } = await supabaseClient.auth.signIn({
-    email: email,
-    password: password
-  })
-  if (error) {
-    console.error(error)
-  } else {
-    console.log(user)
-  }
-}
-
 supabaseClient.auth.onAuthStateChange((event, session) => {
   console.log(event, session)
-  if (event === "SIGNED_IN") {
-    console.log('signed in as', session.user.email);
-    // hide sign in element if signed in
-    // document.querySelector('#signin').classList.add('hidden');
+  if (event === "SIGNED_OUT") {
+      // TODO change this to url of home page
+      window.location.href = '/login.html'
   }
 })
 
-signIn('lsrugo@hotmail.com', '123456');
-
 loadConnections()
-  .then(data => {
-    createPositionsChart(data)
-    createDatesChart(data)
-    createCompaniesList(data)
+  .then(res => {
+    populateCards(res.count)
+
+    createPositionsChart(res.data)
+    createDatesChart(res.data)
+    createCompaniesList(res.data)
   })
   .then(() => document.querySelector('#message').textContent = '')
 
 // load connections for current user
 async function loadConnections() {
   // TODO make this more specific
-  const { data, error } = await supabaseClient
+  const res = await supabaseClient
     .from('Connections')
-    .select('Position, Company, "Connected On"');
+    .select('Position, Company, "Connected On"', {
+      count: 'estimated'
+    });
 
-  if (error) {
-    console.error(error);
-    document.querySelector('#message').textContent = error.message
+  if (res.error) {
+    console.error(res.error);
+    document.querySelector('#message').textContent = res.error.message
+    throw res.error.message
     // TODO format error message on page
   }
 
-  return data
+  return res
+}
+
+function populateCards(count) {
+  const formattedCount = count.toLocaleString()
+  document.querySelector('#total-connections').textContent = formattedCount
 }
 
 function createPositionsChart(data) {
@@ -168,24 +163,90 @@ function createDatesChart(data) {
     numbersList.push(value)
   }
 
-  const colors = randomColor({
-    count: numbersList.length
-  })
-
   const chartData = {
     labels: labelsList,
     datasets: [
       {
         label: 'Connections',
         data: numbersList,
-        backgroundColor: colors
+        backgroundColor: "#4c51bf",
+        borderColor: "#4c51bf",
       }
     ]
   }
 
+  // TODO: fix config
   const config = {
-    type: 'bar',
-    data: chartData
+    type: 'line',
+    data: chartData,
+    options: {
+      title: {
+        display: true,
+        text: "New Connections",
+        fontColor: "black"
+      },
+      legend: {
+        labels: {
+          fontColor: "white"
+        },
+        align: "end",
+        position: "bottom"
+      },
+      tooltips: {
+        mode: "index",
+        intersect: false
+      },
+      hover: {
+        mode: "nearest",
+        intersect: true
+      },
+      scales: {
+        xAxes: [
+          {
+            ticks: {
+              fontColor: "rgba(255,255,255,.7)"
+            },
+            display: true,
+            scaleLabel: {
+              display: false,
+              labelString: "Month",
+              fontColor: "white"
+            },
+            gridLines: {
+              display: false,
+              borderDash: [2],
+              borderDashOffset: [2],
+              color: "rgba(33, 37, 41, 0.3)",
+              zeroLineColor: "rgba(0, 0, 0, 0)",
+              zeroLineBorderDash: [2],
+              zeroLineBorderDashOffset: [2]
+            }
+          }
+        ],
+        yAxes: [
+          {
+            ticks: {
+              fontColor: "rgba(255,255,255,.7)"
+            },
+            display: true,
+            scaleLabel: {
+              display: false,
+              labelString: "Value",
+              fontColor: "white"
+            },
+            gridLines: {
+              borderDash: [3],
+              borderDashOffset: [3],
+              drawBorder: false,
+              color: "rgba(255, 255, 255, 0.15)",
+              zeroLineColor: "rgba(33, 37, 41, 0)",
+              zeroLineBorderDash: [2],
+              zeroLineBorderDashOffset: [2]
+            }
+          }
+        ]
+      }
+    }
   }
 
   new Chart(
