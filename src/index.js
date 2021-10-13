@@ -1,9 +1,8 @@
 /*global supabase, Chart, randomColor*/
 import Papa from "papaparse";
 
-const API_URL = "https://uzuarjwobeobconcjdkb.supabase.co";
-const ANON_KEY =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTYzMjA5MjUwMSwiZXhwIjoxOTQ3NjY4NTAxfQ.wcnGs329dCulDLOTPcLpEEY8zDREbXi-9mXduoq8npQ";
+const API_URL = import.meta.env.VITE_API_URL;
+const ANON_KEY = import.meta.env.VITE_ANON_KEY;
 const supabaseClient = supabase.createClient(API_URL, ANON_KEY);
 
 supabaseClient.auth.onAuthStateChange((event, session) => {
@@ -13,6 +12,12 @@ supabaseClient.auth.onAuthStateChange((event, session) => {
     window.location.href = '/login.html'
   }
 })
+
+if (!supabaseClient.auth.user()) {
+  window.location.href = '/login.html'
+}
+
+console.log(supabaseClient.auth.user())
 
 loadConnections()
   .then(res => {
@@ -28,8 +33,8 @@ loadConnections()
 async function loadConnections() {
   // TODO make this more specific
   const res = await supabaseClient
-    .from('Connections')
-    .select('Position, Company, "Connected On"', {
+    .from('connections')
+    .select('position, company, connected_on', {
       count: 'estimated'
     });
 
@@ -55,7 +60,7 @@ function createPositionsChart(data) {
 
   // count number of connections in each position
   for (const item of data) {
-    let position = item['Position'].toLowerCase()
+    let position = item['position'].toLowerCase()
     // let position = item['Position']
     if (position.includes('ceo') || position.includes('chief executive officer')) {
       position = 'CEO'
@@ -136,7 +141,7 @@ function createDatesChart(data) {
 
   // count number of connections for each month
   for (const item of data) {
-    const date = new Date(item['Connected On'])
+    const date = new Date(item['connected_on'])
     const year = date.getFullYear()
     const month = date.getUTCMonth()
 
@@ -199,7 +204,7 @@ function createCompaniesList(data) {
   const companies = {}
 
   for (const item of data) {
-    const co = item['Company']
+    const co = item['company']
     // const co = item['Company'].toLowerCase()
     if (co === '') {
       continue
@@ -248,9 +253,23 @@ function importConnections(file) {
     },
     complete: (results) => {
       console.log(results);
+      // TODO: handle errors
 
-      supabaseClient.from('Connections')
-        .insert(results.data)
+      const user_id = supabaseClient.auth.user().id
+
+      const data = results.data.map(val => {
+        return {
+          first_name: val['First Name'],
+          last_name: val['Last Name'],
+          email: val['Email Address'],
+          company: val['Company'],
+          connected_on: val['Connected On'],
+          user_id: user_id
+        }
+      });
+
+      supabaseClient.from('connections')
+        .insert(data)
         .then(res => {
           if (res.error) {
             console.error(res.error)

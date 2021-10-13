@@ -3,7 +3,6 @@
 <head>
     <title>Connections Dashboard</title>
     <link rel="stylesheet" href="/src/styles.css" />
-    <link rel="stylesheet" href="/tailwind.css" />
     <meta charset="UTF-8" />
 </head>
 
@@ -95,9 +94,8 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
     <script>
-        const API_URL = "https://uzuarjwobeobconcjdkb.supabase.co";
-        const ANON_KEY =
-            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTYzMjA5MjUwMSwiZXhwIjoxOTQ3NjY4NTAxfQ.wcnGs329dCulDLOTPcLpEEY8zDREbXi-9mXduoq8npQ";
+        const API_URL = import.meta.env.VITE_API_URL;
+        const ANON_KEY = import.meta.env.VITE_ANON_KEY;
         const supabaseClient = supabase.createClient(API_URL, ANON_KEY);
 
         supabaseClient.auth.onAuthStateChange((event, session) => {
