@@ -263,6 +263,7 @@ function importConnections(file) {
           last_name: val['Last Name'],
           email: val['Email Address'],
           company: val['Company'],
+          position: val['Position'],
           connected_on: val['Connected On'],
           user_id: user_id
         }
