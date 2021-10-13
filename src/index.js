@@ -17,8 +17,6 @@ if (!supabaseClient.auth.user()) {
   window.location.href = '/login.html'
 }
 
-console.log(supabaseClient.auth.user())
-
 loadConnections()
   .then(res => {
     populateCards(res.count)
@@ -60,6 +58,11 @@ function createPositionsChart(data) {
 
   // count number of connections in each position
   for (const item of data) {
+    if (!item['position']){
+      // skip item if position is not set
+      continue
+    }
+
     let position = item['position'].toLowerCase()
     // let position = item['Position']
     if (position.includes('ceo') || position.includes('chief executive officer')) {
@@ -96,10 +99,10 @@ function createPositionsChart(data) {
 
   // reformat to fit chart
   for (const [key, value] of Object.entries(positions)) {
-    if (value < 2) {
-      // skip positions with only 1 connection
-      continue
-    }
+    // if (value < 2) {
+       // skip positions with only 1 connection
+    //   continue
+    // }
     labelsList.push(key)
     numbersList.push(value)
   }
