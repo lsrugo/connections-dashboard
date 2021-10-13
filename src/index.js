@@ -7,25 +7,27 @@ const supabaseClient = supabase.createClient(API_URL, ANON_KEY);
 
 supabaseClient.auth.onAuthStateChange((event, session) => {
   console.log(event, session)
+  if (event === "SIGNED_IN") {
+    loadConnections()
+      .then(res => {
+        populateCards(res.count)
+
+        createPositionsChart(res.data)
+        createDatesChart(res.data)
+        createCompaniesList(res.data)
+      })
+      .then(() => document.querySelector('#message').textContent = '')
+  }
   if (event === "SIGNED_OUT") {
-    // TODO change this to url of home page
-    window.location.href = '/login.html'
+    // TODO change this to url of landing page
+    window.location.href = '/login'
   }
 })
 
 if (!supabaseClient.auth.user()) {
-  window.location.href = '/login.html'
+  // TODO redirect when user is not logged in
+  // window.location.href = '/login'
 }
-
-loadConnections()
-  .then(res => {
-    populateCards(res.count)
-
-    createPositionsChart(res.data)
-    createDatesChart(res.data)
-    createCompaniesList(res.data)
-  })
-  .then(() => document.querySelector('#message').textContent = '')
 
 // load connections for current user
 async function loadConnections() {
@@ -58,7 +60,7 @@ function createPositionsChart(data) {
 
   // count number of connections in each position
   for (const item of data) {
-    if (!item['position']){
+    if (!item['position']) {
       // skip item if position is not set
       continue
     }
@@ -91,7 +93,7 @@ function createPositionsChart(data) {
     positions[position] ? positions[position] += 1 : positions[position] = 1;
   }
 
-  // TODO: add popup to expand 'other'
+  // TODO add popup to expand 'other'
   console.log(positions)
 
   const labelsList = []
@@ -100,7 +102,7 @@ function createPositionsChart(data) {
   // reformat to fit chart
   for (const [key, value] of Object.entries(positions)) {
     // if (value < 2) {
-       // skip positions with only 1 connection
+    // skip positions with only 1 connection
     //   continue
     // }
     labelsList.push(key)
@@ -164,7 +166,7 @@ function createDatesChart(data) {
 
   // reformat to fit chart
   for (const [year, yearList] of Object.entries(dates)) {
-    // TODO: use set colors
+    // TODO use set colors
     const color = randomColor()
     datasets.push({
       label: String(year),
@@ -174,7 +176,7 @@ function createDatesChart(data) {
     })
   }
 
-  // TODO: fix config
+  // TODO fix config
   const config = {
     type: 'line',
     data: {
@@ -256,7 +258,7 @@ function importConnections(file) {
     },
     complete: (results) => {
       console.log(results);
-      // TODO: handle errors
+      // TODO handle errors
 
       const user_id = supabaseClient.auth.user().id
 
