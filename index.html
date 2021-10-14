@@ -20,6 +20,13 @@
     </div>
   </nav>
 
+  <label for="import"
+    class="absolute top-4 right-6 text-white text-sm font-semibold rounded-lg bg-red-500 hover:bg-red-700 z-10 p-3 shadow-lg">
+    <i class="fas fa-file-import mr-0.5"></i>
+    Import
+  </label>
+  <input type="file" id="import" hidden />
+
   <!-- Header -->
   <div class="bg-pink-600 md:pt-32 pb-32 pt-12">
     <div class="mx-auto w-full md:w-3/4">
@@ -90,11 +97,6 @@
       </div>
     </div>
   </div>
-
-  <!-- TODO: layout -->
-  <label for="import" class="hidden text-white font-bold m-2 px-4 py-2 bg-blue-500 hover:bg-blue-700 rounded-md">Import
-    Connections</label>
-  <input type="file" id="import" hidden />
 
   <p id="message" role="status"></p>
   <!-- flex container with all the charts -->
