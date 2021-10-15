@@ -1,3 +1,15 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.logged-in .pre-login {
+    display: none;
+}
+
+:not(.logged-in) > .login-required {
+    display: none;
+}
+
+.logged-in {
+    --login-page: 0;
+}

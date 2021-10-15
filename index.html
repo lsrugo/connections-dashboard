@@ -15,22 +15,42 @@
 
   <nav
     class="absolute top-0 left-0 w-full z-10 bg-transparent md:flex-row md:flex-nowrap md:justify-start flex items-center p-4">
-    <div class="w-full mx-auto items-center flex justify-between md:flex-nowrap flex-wrap md:px-10 px-4 py-2">
+    <div class="items-center flex justify-between md:flex-nowrap flex-wrap md:px-10 px-4 py-2">
       <a class="text-white text-sm uppercase font-semibold" href="./index.html">Dashboard</a>
     </div>
   </nav>
 
-  <label for="import"
-    class="absolute top-4 right-6 text-white text-sm font-semibold rounded-lg bg-red-500 hover:bg-red-700 z-10 p-3 shadow-lg">
-    <i class="fas fa-file-import mr-0.5"></i>
-    Import
-  </label>
-  <input type="file" id="import" hidden />
+  <section class="pre-login w-full bg-pink-600 md:pt-32 pb-32 pt-12">
+    <form id="login" class="flex flex-col px-24 w-1/2 mx-auto ">
+      <input name="email" type="email" autocomplete="email" placeholder="Email address"
+        class="mb-2 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 px-3 py-2 border border-gray-300 placeholder-gray-500 block rounded-md">
+      <button type="submit"
+        class="text-white text-sm font-semibold rounded-lg bg-red-500 hover:bg-red-700 px-4 py-3 shadow-lg cursor-pointer">
+        <i class="fas fa-sign-in-alt mr-0.5"></i>
+        Login
+      </button>
+    </form>
+  </section>
+
+  <section class="login-required flex absolute top-4 right-6 z-10">
+    <label for="import"
+      class="text-white text-sm font-semibold rounded-lg bg-red-500 hover:bg-red-700 px-4 py-3 shadow-lg cursor-pointer mr-2">
+      <i class="fas fa-file-import mr-0.5"></i>
+      Import
+    </label>
+    <input type="file" id="import" hidden />
+
+    <button
+      class="text-white text-sm font-semibold rounded-lg bg-red-500 hover:bg-red-700 px-4 py-3 shadow-lg cursor-pointer"
+      id="sign-out">
+      <i class="fas fa-sign-out-alt"></i>
+      Sign Out
+    </button>
+  </section>
 
   <!-- Header -->
-  <div class="bg-pink-600 md:pt-32 pb-32 pt-12">
+  <div class="login-required bg-pink-600 md:pt-32 pb-32 pt-12">
     <div class="mx-auto w-full md:w-3/4">
-      <div>
         <!-- Card stats -->
         <div class="flex flex-wrap justify-center">
           <div class="w-full mx-2" style="width: 350px;">
@@ -94,13 +114,12 @@
             </div>
           </div>
         </div>
-      </div>
     </div>
   </div>
 
   <p id="message" role="status"></p>
   <!-- flex container with all the charts -->
-  <main class="p-2 flex flex-wrap justify-center mx-auto -m-24 lg:w-3/4">
+  <main class="login-required p-2 flex flex-wrap justify-center mx-auto -m-24 lg:w-3/4">
     <div class="m-2 shadow-lg rounded bg-white p-4" style="width: 350px;">
       <h2 class="text-center text-lg font-bold">Positions</h2>
       <canvas id="positionsChart"></canvas>

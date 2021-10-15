@@ -8,6 +8,8 @@ const supabaseClient = supabase.createClient(API_URL, ANON_KEY);
 supabaseClient.auth.onAuthStateChange((event, session) => {
   console.log(event, session)
   if (event === "SIGNED_IN") {
+    document.querySelector('body').classList.add('logged-in')
+
     loadConnections()
       .then(res => {
         populateCards(res.count)
@@ -19,19 +21,43 @@ supabaseClient.auth.onAuthStateChange((event, session) => {
       .then(() => document.querySelector('#message').textContent = '')
   }
   if (event === "SIGNED_OUT") {
+    document.querySelector('body').classList.remove('logged-in')
     // TODO change this to url of landing page
-    window.location.href = '/login'
+    window.location.href = '/login.html'
   }
 })
 
-if (!supabaseClient.auth.user()) {
-  // TODO redirect when user is not logged in
-  // window.location.href = '/login'
-}
+// handle sign in form
+document.querySelector('#login').addEventListener('submit', async e => {
+  // must call before first await
+  // https://stackoverflow.com/a/37146788/10056307
+  e.preventDefault()
+
+  const formData = new FormData(e.target)
+  const { error } = await supabaseClient.auth.signIn({
+      email: formData.get('email'),
+      // password: formData.get('password') // not using password
+  }, {
+      // handle localhost for development
+      redirectTo: window.location.origin + '/'
+  })
+  if (error) {
+      console.error(error)
+      // TODO show error to user
+      document.querySelector('#message').textContent = error.message
+      return
+  }
+  // TODO tell user to check inbox
+  console.log('magic link sent')
+})
+
+// handle sign out button
+document.querySelector('#sign-out').addEventListener('click', () => supabaseClient.auth.signOut())
 
 // load connections for current user
 async function loadConnections() {
-  // TODO make this more specific
+  // TODO make this more specific (filter dates)
+  // supabase filters by user
   const res = await supabaseClient
     .from('connections')
     .select('position, company, connected_on', {
