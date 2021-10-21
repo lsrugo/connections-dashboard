@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Connections Dashboard</title>
+    <link rel="stylesheet" href="/src/styles.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+        integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <meta charset="UTF-8" />
+</head>
+
+<body class="bg-gray-50">
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+
+    <nav
+        class="absolute top-0 left-0 w-full z-10 bg-transparent md:flex-row md:flex-nowrap md:justify-start flex items-center p-4">
+        <div class="items-center flex justify-between md:flex-nowrap flex-wrap md:px-10 px-4 py-2 space-x-4">
+            <!-- ? Does ./ work? -->
+            <a class="text-white text-sm uppercase font-semibold" href="./index.html">Dashboard</a>
+            <a class="text-white text-sm uppercase font-semibold" href="./connections.html">Connections</a>
+        </div>
+    </nav>
+
+    <section class="pre-login w-full bg-pink-600 md:pt-32 pb-32 pt-12">
+        <form id="login" class="flex flex-col px-24 w-1/2 mx-auto ">
+            <input name="email" type="email" autocomplete="email" placeholder="Email address"
+                class="mb-2 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 px-3 py-2 border border-gray-300 placeholder-gray-500 block rounded-md">
+            <button type="submit"
+                class="text-white text-sm font-semibold rounded-lg bg-red-500 hover:bg-red-700 px-4 py-3 shadow-lg cursor-pointer">
+                <i class="fas fa-sign-in-alt mr-0.5"></i>
+                Login
+            </button>
+        </form>
+    </section>
+
+    <section class="login-required flex absolute top-4 right-6 z-10">
+        <label for="import"
+            class="text-white text-sm font-semibold rounded-lg bg-red-500 hover:bg-red-700 px-4 py-3 shadow-lg cursor-pointer mr-2">
+            <i class="fas fa-file-import mr-0.5"></i>
+            Import
+        </label>
+        <input type="file" id="import" hidden />
+
+        <button
+            class="text-white text-sm font-semibold rounded-lg bg-red-500 hover:bg-red-700 px-4 py-3 shadow-lg cursor-pointer"
+            id="sign-out">
+            <i class="fas fa-sign-out-alt"></i>
+            Sign Out
+        </button>
+    </section>
+
+    <!-- Header -->
+    <div class="login-required bg-pink-600 md:pt-32 pb-32 pt-12">
+        <div class="mx-auto w-full md:w-3/4">
+
+        </div>
+    </div>
+
+    <p id="message" role="status"></p>
+    <!-- main table -->
+    <main class="login-required p-2 flex flex-wrap justify-center mx-auto -m-32 lg:w-3/4">
+        <div class="bg-white rounded-lg shadow-lg p-4">
+            <label for="search">Search</label>
+            <input class="search border border-pink-600 rounded" id="search" />
+            <table>
+                <thead>
+                    <th class="first_name" id="first-name">First Name</th>
+                    <th class="last_name" id="last-name">Last Name</th>
+                    <th class="company" id="company">Company</th>
+                    <th class="position" id="position">Position</th>
+                    <th class="email" id="email">Email</th>
+                    <th class="connected_on" id="connected-date">Connected On</th>
+                </thead>
+                <tbody class="list">
+                    <!-- table rows are inserted here -->
+                    <tr>
+                        <td class="first_name"></td>
+                        <td class="last_name"></td>
+                        <td class="company"></td>
+                        <td class="position"></td>
+                        <td class="email"></td>
+                        <td class="connected_on"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <!-- TODO new script -->
+    <script type="module" src="/src/connections.js"></script>
+
+    <!-- supabase https://supabase.io -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <!-- list.js https://listjs.com -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/list.js/2.3.1/list.min.js"
+        integrity="sha512-93wYgwrIFL+b+P3RvYxi/WUFRXXUDSLCT2JQk9zhVGXuS2mHl2axj6d+R6pP+gcU5isMHRj1u0oYE/mWyt/RjA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</body>
+
+</html>
