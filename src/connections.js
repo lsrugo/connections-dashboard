@@ -1,4 +1,4 @@
-/*global supabase, List*/
+/*global supabase*/
 const API_URL = import.meta.env.VITE_API_URL;
 const ANON_KEY = import.meta.env.VITE_ANON_KEY;
 const supabaseClient = supabase.createClient(API_URL, ANON_KEY);
@@ -12,19 +12,44 @@ supabaseClient.auth.onAuthStateChange((event, session) => {
             .then(res => {
                 const tableEl = document.querySelector('table')
 
-                var options = {
-                    valueNames: [ 'first_name', 'last_name', 'company', 'position', 'email', 'connected_on' ]
-                };
-                
-                var connectionsList = new List(tableEl, options, res.data);
+                replaceRows(res.data, tableEl.querySelector('tbody'))
 
-                document.querySelector('#search').addEventListener('change', (e) => connectionsList.search(e.target.value))
-                document.querySelector('#first-name').addEventListener('click', () => connectionsList.sort('first_name'))
-                document.querySelector('#last-name').addEventListener('click', () => connectionsList.sort('last_name'))
-                document.querySelector('#company').addEventListener('click', () => connectionsList.sort('company'))
-                document.querySelector('#position').addEventListener('click', () => connectionsList.sort('position'))
-                document.querySelector('#email').addEventListener('click', () => connectionsList.sort('email'))
-                document.querySelector('#connected-date').addEventListener('click', () => connectionsList.sort('connected_on'))
+                // document.querySelector('#search').addEventListener('change', (e) => connectionsList.search(e.target.value))
+                document.querySelectorAll('th').forEach((el) => {
+                    el.addEventListener('click', async (event) => {
+                        const colEl = event.target
+                        const col = colEl.classList[0]
+
+                        // reset all icons to both arrows
+                        for (const icon of tableEl.querySelectorAll('i')) {
+                            icon.classList.remove('fa-sort-up')
+                            icon.classList.remove('fa-sort-down')
+                            icon.classList.add('fa-sort')
+                        }
+
+                        const icon = colEl.querySelector('i')
+                        const asc = icon.classList.toggle('asc')
+                        // remove icon with both arrows
+                        icon.classList.remove('fa-sort')
+                        // switch between up and down arrows
+                        if (asc) {
+                            icon.classList.add('fa-sort-up')
+                        } else {
+                            icon.classList.add('fa-sort-down')
+                        }
+
+                        const res = await supabaseClient
+                            .from('connections')
+                            .select('*')
+                            .order(col, {ascending: asc})
+
+                        if (res.error) {
+                            console.error(res.error.message)
+                        }
+
+                        replaceRows(res.data, tableEl.querySelector('tbody'))
+                    })
+                })
 
             })
             .then(() => document.querySelector('#message').textContent = '')
@@ -80,4 +105,25 @@ async function loadConnections() {
     }
 
     return res
+}
+
+function insertRow(row, index, table) {
+    const rowEl = table.insertRow(index)
+
+    rowEl.innerHTML = `
+    <td class="first_name">${row.first_name}</td>
+    <td class="last_name">${row.last_name}</td>
+    <td class="company">${row.company}</td>
+    <td class="position">${row.position || ''}</td>
+    <td class="email">${row.email}</td>
+    <td class="connected_on">${row.connected_on}</td>
+    `
+
+    return rowEl
+}
+
+function replaceRows(rows, table) {
+    table.replaceChildren('')
+
+    rows.forEach((row, index) => insertRow(row, index, table))
 }
