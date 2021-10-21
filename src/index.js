@@ -23,7 +23,7 @@ supabaseClient.auth.onAuthStateChange((event, session) => {
   if (event === "SIGNED_OUT") {
     document.querySelector('body').classList.remove('logged-in')
     // TODO change this to url of landing page
-    window.location.href = '/login.html'
+    // window.location.href = '/login.html'
   }
 })
 
@@ -56,6 +56,7 @@ document.querySelector('#sign-out').addEventListener('click', () => supabaseClie
 
 // load connections for current user
 async function loadConnections() {
+  // * TODO use separate query for each chart
   // TODO make this more specific (filter dates)
   // supabase filters by user
   const res = await supabaseClient
