@@ -63,21 +63,36 @@
         <div class="bg-white rounded-lg shadow-lg p-4">
             <!-- <label for="search">Search</label>
             <input class="search border border-pink-600 rounded" id="search" /> -->
+            <div class="flex items-center border px-1 py-3 rounded-md">
+                <h2 class="px-4 text-lg font-bold">Filters</h2>
+                <label>
+                    First Name
+                    <input type="text" id="filter-first_name" class="px-2 py-1 shadow border rounded">
+                </label>
+                <label>
+                    Last Name
+                    <input type="text" id="filter-last_name" class="px-2 py-1 shadow border rounded">
+                </label>
+                <label>
+                    Company
+                    <input type="text" id="filter-company" class="px-2 py-1 shadow border rounded">
+                </label>
+            </div>
             <table>
                 <thead>
-                    <th class="first_name" id="first-name">
+                    <th id="first_name">
                         First Name
                         <i class="fas fa-sort"></i>
                     </th>
-                    <th class="last_name" id="last-name">
+                    <th id="last_name">
                         Last Name
                         <i class="fas fa-sort"></i>
                     </th>
-                    <th class="company" id="company">
+                    <th id="company">
                         Company
                         <i class="fas fa-sort"></i>
                     </th>
-                    <th class="position" id="position">
+                    <th id="position">
                         Position
                         <i class="fas fa-sort"></i>
                     </th>
@@ -85,7 +100,7 @@
                         Email
                         <i class="fas fa-sort"></i>
                     </th>
-                    <th class="connected_on" id="connected-date">
+                    <th id="connected_on">
                         Connected On
                         <i class="fas fa-sort"></i>
                     </th>

@@ -3,19 +3,54 @@ const API_URL = import.meta.env.VITE_API_URL;
 const ANON_KEY = import.meta.env.VITE_ANON_KEY;
 const supabaseClient = supabase.createClient(API_URL, ANON_KEY);
 
+const queryState = {
+    sort: [],
+    filter: []
+}
+
 supabaseClient.auth.onAuthStateChange((event) => {
     if (event === "SIGNED_IN") {
         loadConnections()
             .then(res => {
                 const tableEl = document.querySelector('table')
 
-                replaceRows(res.data, tableEl.querySelector('tbody'))
+                replaceRows(res.data, tableEl)
 
-                // document.querySelector('#search').addEventListener('change', (e) => connectionsList.search(e.target.value))
-                
+                // document.querySelector('#search').addEventListener('input', (e) => connectionsList.search(e.target.value))
+
                 // add an event listener to each column to enable sorting
                 document.querySelectorAll('th').forEach((el) => {
-                    el.addEventListener('click', (event) => handleSort(tableEl, event.target, event.target.classList[0]))
+                    el.addEventListener('click', function () { handleSort(tableEl, this, this.id) })
+                })
+
+                // add event listeners for filtering
+                document.querySelectorAll('input[id^="filter-"]').forEach(el => {
+                    el.addEventListener('change', async function () {
+                        // remove "filter-" from input id
+                        const col = this.id.slice(7)
+
+                        queryState.filter = [col, '%'+this.value+'%']
+                        console.log('query state', queryState)
+
+                        let query = supabaseClient
+                            .from('connections')
+                            .select('*')
+                            .ilike(...queryState.filter)
+
+                        if (queryState.sort.length > 0) {
+                            query = query.order(...queryState.sort)
+                        }
+                        
+                        const res = await query
+
+                        if (res.error) {
+                            console.error(res.error.message)
+                        }
+
+                        console.log('filter results', res.data)
+
+                        replaceRows(res.data, tableEl)
+                    })
                 })
 
             })
@@ -26,8 +61,8 @@ supabaseClient.auth.onAuthStateChange((event) => {
 /**
  * update table when a column sort is selected
  * @param {HTMLTableElement} tableEl the main table element
- * @param {*} colEl the element of the selected column header
- * @param {*} col the column name to sort by
+ * @param {HTMLElement} colEl the element of the selected column header
+ * @param {string} col the column name to sort by
  */
 async function handleSort(tableEl, colEl, col) {
     // reset all icons to both arrows
@@ -48,16 +83,25 @@ async function handleSort(tableEl, colEl, col) {
         icon.classList.add('fa-sort-down')
     }
 
-    const res = await supabaseClient
+    queryState.sort = [col, {ascending: asc}]
+    console.log('query state', queryState)
+
+    let query = supabaseClient
         .from('connections')
         .select('*')
-        .order(col, { ascending: asc })
+        .order(...queryState.sort)
+    
+    if (queryState.filter.length > 0) {
+        query = query.ilike(...queryState.filter)
+    }
+        
+    const res = await query
 
     if (res.error) {
         console.error(res.error.message)
     }
 
-    replaceRows(res.data, tableEl.querySelector('tbody'))
+    replaceRows(res.data, tableEl)
 }
 
 /**
@@ -109,7 +153,9 @@ function insertRow(row, index, table) {
  * @param {HTMLTableElement} table the table element
  */
 function replaceRows(rows, table) {
-    table.replaceChildren('')
+    const tbody = table.querySelector('tbody')
 
-    rows.forEach((row, index) => insertRow(row, index, table))
+    tbody.replaceChildren('')
+
+    rows.forEach((row, index) => insertRow(row, index, tbody))
 }
