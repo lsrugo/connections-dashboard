@@ -53,7 +53,9 @@ supabaseClient.auth.onAuthStateChange((event) => {
     }
 })
 
-// load connections for current user
+/**
+ * load connections for current user
+ */
 async function loadConnections() {
     // supabase filters by user
     const res = await supabaseClient
@@ -72,6 +74,13 @@ async function loadConnections() {
     return res
 }
 
+/**
+ * insert a new row into the provided table element
+ * @param {*} row an object of the data to be inserted
+ * @param {number} index the position to insert the row
+ * @param {HTMLTableElement} table the table element
+ * @returns {HTMLTableRowElement}
+ */
 function insertRow(row, index, table) {
     const rowEl = table.insertRow(index)
 
@@ -87,6 +96,11 @@ function insertRow(row, index, table) {
     return rowEl
 }
 
+/**
+ * remove all rows in the table and add new rows
+ * @param {Array<any>} rows new rows to be inserted
+ * @param {HTMLTableElement} table the table element
+ */
 function replaceRows(rows, table) {
     table.replaceChildren('')
 
