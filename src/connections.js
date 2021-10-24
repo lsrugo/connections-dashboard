@@ -12,46 +12,53 @@ supabaseClient.auth.onAuthStateChange((event) => {
                 replaceRows(res.data, tableEl.querySelector('tbody'))
 
                 // document.querySelector('#search').addEventListener('change', (e) => connectionsList.search(e.target.value))
+                
+                // add an event listener to each column to enable sorting
                 document.querySelectorAll('th').forEach((el) => {
-                    el.addEventListener('click', async (event) => {
-                        const colEl = event.target
-                        const col = colEl.classList[0]
-
-                        // reset all icons to both arrows
-                        for (const icon of tableEl.querySelectorAll('i')) {
-                            icon.classList.remove('fa-sort-up')
-                            icon.classList.remove('fa-sort-down')
-                            icon.classList.add('fa-sort')
-                        }
-
-                        const icon = colEl.querySelector('i')
-                        const asc = icon.classList.toggle('asc')
-                        // remove icon with both arrows
-                        icon.classList.remove('fa-sort')
-                        // switch between up and down arrows
-                        if (asc) {
-                            icon.classList.add('fa-sort-up')
-                        } else {
-                            icon.classList.add('fa-sort-down')
-                        }
-
-                        const res = await supabaseClient
-                            .from('connections')
-                            .select('*')
-                            .order(col, { ascending: asc })
-
-                        if (res.error) {
-                            console.error(res.error.message)
-                        }
-
-                        replaceRows(res.data, tableEl.querySelector('tbody'))
-                    })
+                    el.addEventListener('click', (event) => handleSort(tableEl, event.target, event.target.classList[0]))
                 })
 
             })
             .then(() => document.querySelector('#message').textContent = '')
     }
 })
+
+/**
+ * update table when a column sort is selected
+ * @param {HTMLTableElement} tableEl the main table element
+ * @param {*} colEl the element of the selected column header
+ * @param {*} col the column name to sort by
+ */
+async function handleSort(tableEl, colEl, col) {
+    // reset all icons to both arrows
+    for (const icon of tableEl.querySelectorAll('i')) {
+        icon.classList.remove('fa-sort-up')
+        icon.classList.remove('fa-sort-down')
+        icon.classList.add('fa-sort')
+    }
+
+    const icon = colEl.querySelector('i')
+    const asc = icon.classList.toggle('asc')
+    // remove icon with both arrows
+    icon.classList.remove('fa-sort')
+    // switch between up and down arrows
+    if (asc) {
+        icon.classList.add('fa-sort-up')
+    } else {
+        icon.classList.add('fa-sort-down')
+    }
+
+    const res = await supabaseClient
+        .from('connections')
+        .select('*')
+        .order(col, { ascending: asc })
+
+    if (res.error) {
+        console.error(res.error.message)
+    }
+
+    replaceRows(res.data, tableEl.querySelector('tbody'))
+}
 
 /**
  * load connections for current user
