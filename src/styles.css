@@ -18,3 +18,7 @@ th, td {
     padding: 0.5rem;
     text-align: left;
 }
+
+tbody tr:nth-child(odd) {
+    background: #eee;
+  }
