@@ -142,6 +142,9 @@ function insertRow(row, index, table) {
     <td class="position">${row.position || ''}</td>
     <td class="email">${row.email}</td>
     <td class="connected_on">${row.connected_on}</td>
+    <button id="edit-${row.id}" class="p-2 my-2 mx-1 hover:bg-gray-200 active:bg-gray-300 rounded-md">
+        <i class="fas fa-edit"></i>
+    </button>
     `
 
     return rowEl
