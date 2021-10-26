@@ -5,17 +5,21 @@ const supabaseClient = supabase.createClient(API_URL, ANON_KEY);
 
 let id = new URLSearchParams(location.search).get('id');
 
-let count = await supabaseClient.from('connections').select('*', { count: 'estimated' });
-count = count.count
+let count;
 
 loadSelectedConnection(id);
 
 document.querySelector('#edit-form').addEventListener('submit', saveConnection);
 
-function loadSelectedConnection(id) {
+async function loadSelectedConnection(id) {
     // leave form blank if no id is provided
     if (!id) {
         return;
+    }
+
+    if (count === undefined) {
+        const countReq = await supabaseClient.from('connections').select('*', { count: 'estimated' }).limit(1);
+        count = countReq.count
     }
 
     // load data for provided id from supabase
