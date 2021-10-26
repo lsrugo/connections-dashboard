@@ -8,6 +8,7 @@ module.exports = defineConfig({
       input: {
         main: resolve(__dirname, 'index.html'),
         connections: resolve(__dirname, 'connections.html'),
+        edit: resolve(__dirname, 'edit.html'),
       }
     }
   }
