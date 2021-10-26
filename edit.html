@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Connection</title>
+
+    <link rel="stylesheet" href="/src/styles.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+        integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<body class="bg-gray-50">
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+
+    <nav
+        class="absolute top-0 left-0 w-full z-10 bg-transparent md:flex-row md:flex-nowrap md:justify-start flex items-center p-4">
+        <div class="items-center flex justify-between md:flex-nowrap flex-wrap md:px-10 px-4 py-2 space-x-4">
+            <a class="text-white text-sm uppercase font-semibold hover:underline" href="/index.html">Dashboard</a>
+            <a class="text-white text-sm uppercase font-semibold hover:underline"
+                href="/connections.html">Connections</a>
+        </div>
+    </nav>
+
+    <section class="pre-login w-full bg-pink-600 md:pt-32 pb-32 pt-12">
+        <form id="login" class="flex flex-col px-24 w-1/2 mx-auto ">
+            <input name="email" type="email" autocomplete="email" placeholder="Email address"
+                class="mb-2 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 px-3 py-2 border border-gray-300 placeholder-gray-500 block rounded-md">
+            <button type="submit"
+                class="text-white text-sm font-semibold rounded-lg bg-red-500 hover:bg-red-700 px-4 py-3 shadow-lg cursor-pointer">
+                <i class="fas fa-sign-in-alt mr-0.5"></i>
+                Login
+            </button>
+        </form>
+    </section>
+
+    <section class="login-required flex absolute top-4 right-6 z-10">
+        <label for="import"
+            class="text-white text-sm font-semibold rounded-lg bg-red-500 hover:bg-red-700 px-4 py-3 shadow-lg cursor-pointer mr-2">
+            <i class="fas fa-file-import mr-0.5"></i>
+            Import
+        </label>
+        <input type="file" id="import" hidden />
+
+        <button
+            class="text-white text-sm font-semibold rounded-lg bg-red-500 hover:bg-red-700 px-4 py-3 shadow-lg cursor-pointer"
+            id="sign-out">
+            <i class="fas fa-sign-out-alt"></i>
+            Sign Out
+        </button>
+    </section>
+
+    <!-- Header -->
+    <div class="login-required bg-pink-600 md:pt-32 pb-32 pt-12">
+        <div class="mx-auto w-full md:w-3/4">
+
+        </div>
+    </div>
+
+    <p id="message" role="status"></p>
+    <!-- main table -->
+    <main class="login-required p-2 flex flex-wrap justify-center mx-auto -m-32 lg:w-3/4">
+        <div class="bg-white rounded-lg shadow-lg p-4 relative">
+            <p id="progress" class="text-center">...</p>
+            <button id="previous"
+                class="absolute left-3 top-3 px-2 py-1 hover:bg-gray-200 active:bg-gray-300 rounded-md">
+                <i class="fas fa-arrow-circle-left"></i>
+            </button>
+            <button id="next" class="absolute right-3 top-3 px-2 py-1 hover:bg-gray-200 active:bg-gray-300 rounded-md">
+                <i class="fas fa-arrow-circle-right"></i>
+            </button>
+            <h1 class="font-bold text-xl mb-3 mt-2">Edit Connection</h1>
+            <form id="edit-form" class="flex flex-col space-y-2">
+                <label for="first-name">
+                    First Name
+                </label>
+                <input type="text" name="first_name" id="first_name" class="px-2 py-1 shadow-sm border rounded">
+                <label for="last-name">
+                    Last Name
+                </label>
+                <input type="text" name="last_name" id="last_name" class="px-2 py-1 shadow-sm border rounded">
+                <label for="email">
+                    Email
+                </label>
+                <input type="email" name="email" id="email" class="px-2 py-1 shadow-sm border rounded">
+                <label for="company">
+                    Company
+                </label>
+                <input type="text" name="company" id="company" class="px-2 py-1 shadow-sm border rounded">
+                <label for="position">
+                    Position
+                </label>
+                <input type="text" name="position" id="position" class="px-2 py-1 shadow-sm border rounded">
+                <label for="connected-on">
+                    Connected On Date
+                </label>
+                <input type="date" name="connected_on" id="connected_on" class="px-2 py-1 shadow-sm border rounded">
+                <label for="notes">Note</label>
+                <textarea name="notes" id="notes" class="px-2 py-1 shadow-sm border rounded"></textarea>
+                <button type="submit" id="save"
+                    class="text-white text-md font-semibold rounded-lg bg-red-500 hover:bg-red-700 px-4 py-2 shadow-lg cursor-pointer">
+                    Save
+                </button>
+            </form>
+        </div>
+    </main>
+
+    <script type="module" src="/src/login.js"></script>
+    <script type="module" src="/src/edit.js"></script>
+
+    <!-- supabase https://supabase.io -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+</body>
+
+</html>
