@@ -11,9 +11,9 @@ supabaseClient.auth.onAuthStateChange((event) => {
       .then(res => {
         populateCards(res.count)
 
-        createPositionsChart(res.data)
+        createPositionsChart()
         createDatesChart(res.data)
-        createCompaniesList(res.data)
+        createCompaniesList()
       })
       .then(() => document.querySelector('#message').textContent = '')
   }
@@ -45,89 +45,54 @@ function populateCards(count) {
   document.querySelector('#total-connections').textContent = formattedCount
 }
 
-function createPositionsChart(data) {
-  document.querySelector('#message').textContent = 'Loading...'
-
-  const positions = {};
-
-  // count number of connections in each position
-  for (const item of data) {
-    if (!item['position']) {
-      // skip item if position is not set
-      continue
-    }
-
-    let position = item['position'].toLowerCase()
-    // let position = item['Position']
-    if (position.includes('ceo') || position.includes('chief executive officer')) {
-      position = 'CEO'
-    } else if (position.includes('cfo') || position.includes('chief financial officer')) {
-      position = 'CFO'
-    } else if (position.includes('coo') || position.includes('chief operating officer')) {
-      position = 'COO'
-    } else if (position.includes('cto') || position.includes('chief technology officer')) {
-      position = 'CTO'
-    } else if (position === 'president') {
-      position = 'President'
-    } else if (position.includes('sales')) {
-      position = 'Sales'
-    } else if (position.includes('marketing')) {
-      position = 'Marketing'
-    } else if (position.includes('business development')) {
-      position = 'Business Development'
-    } else if (position.includes('vice president')) {
-      position = 'Vice President'
-    } else if (position.includes('founder')) {
-      position = 'Founder' // maybe don't need this one
-    } else {
-      position = 'Other'
-    }
-    positions[position] ? positions[position] += 1 : positions[position] = 1;
-  }
-
-  // TODO add popup to expand 'other'
-  console.log(positions)
-
-  const labelsList = []
-  const numbersList = []
-
-  // reformat to fit chart
-  for (const [key, value] of Object.entries(positions)) {
-    // if (value < 2) {
-    // skip positions with only 1 connection
-    //   continue
-    // }
-    labelsList.push(key)
-    numbersList.push(value)
-  }
-
-  console.log('number of positons', numbersList.length)
-  console.log('number of connections', data.length)
-
-  const colors = randomColor({
-    count: numbersList.length
-  })
-
-  const chartData = {
-    labels: labelsList,
-    datasets: [
-      {
-        label: 'Positions',
-        data: numbersList,
-        backgroundColor: colors
+function createPositionsChart() {
+  supabaseClient
+    .from('positions_count')
+    .select('*')
+    // .limit(1)
+    .single()
+    .then(res => {
+      if (res.error) {
+        console.error(res.error)
+        document.querySelector('#message').textContent = res.error.message
+        throw res.error.message
       }
-    ]
-  }
 
-  const config = {
-    type: 'pie',
-    data: chartData
-  }
+      const positions = res.data
 
-  new Chart(
-    document.getElementById('positionsChart'),
-    config
-  );
+      const total = positions['total']
+      delete positions['total']
+
+      positions['Other'] = Object.values(positions).reduce((previous, current) => previous - current, total)
+
+      const positionsSorted = Object.entries(positions).sort((a, b) => b[1] - a[1])
+      // TODO add popup to expand 'other'
+
+      const colors = randomColor({
+        count: positionsSorted.length
+      })
+
+      const chartData = {
+        labels: positionsSorted.map(pos => pos[0]),
+        datasets: [
+          {
+            label: 'Positions',
+            data: positionsSorted.map(pos => pos[1]),
+            backgroundColor: colors
+          }
+        ]
+      }
+
+      const config = {
+        type: 'pie',
+        data: chartData
+      }
+
+      new Chart(
+        document.getElementById('positionsChart'),
+        config
+      );
+    })
 }
 
 function createDatesChart(data) {
@@ -197,35 +162,36 @@ function createDatesChart(data) {
   );
 }
 
-function createCompaniesList(data) {
-  const companies = {}
+function createCompaniesList() {
+  supabaseClient
+    .from('companies_count')
+    .select('*')
+    .then(res => {
+      if (res.error) {
+        console.error(res.error)
+        document.querySelector('#message').textContent = res.error.message
+        throw res.error.message
+      }
 
-  for (const item of data) {
-    const co = item['company']
-    // const co = item['Company'].toLowerCase()
-    if (co === '') {
-      continue
-    }
-    companies[co] ? companies[co] += 1 : companies[co] = 1;
-  }
+      const companies = res.data.sort((a, b) => b['count'] - a['count']).slice(0, 10)
 
-  // sort companies highest to lowest and take top 10
-  const companiesList = Object.entries(companies).sort((a, b) => b[1] - a[1]).slice(0, 10)
-  console.log('top 10 companies', companiesList)
+      // sort companies highest to lowest and take top 10
+      console.log('top 10 companies', companies)
 
-  const table = document.querySelector('#companies-list')
-  for (const co of companiesList) {
-    const row = document.createElement('tr')
-    const coName = document.createElement('td')
-    coName.textContent = co[0]
-    const coNum = document.createElement('td')
-    coNum.textContent = co[1]
-    coNum.classList.add('text-center')
-    row.append(coName, coNum)
-    table.append(row)
-  }
+      const table = document.querySelector('#companies-list')
+      for (const co of companies) {
+        const row = document.createElement('tr')
+        const coName = document.createElement('td')
+        coName.textContent = co['company']
+        const coNum = document.createElement('td')
+        coNum.textContent = co['count']
+        coNum.classList.add('text-center')
+        row.append(coName, coNum)
+        table.append(row)
+      }
 
-  // TODO enable show more and show less buttons for top 25 and 100
+      // TODO enable show more and show less buttons for top 25 and 100
+    })
 }
 
 // handle importing csv
