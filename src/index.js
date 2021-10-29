@@ -185,7 +185,10 @@ function createCompaniesList() {
         table.append(row)
       }
 
-      document.querySelector('#companies-list-more').addEventListener('click', () => {
+      const showMore = document.querySelector('#companies-list-more')
+      const showLess = document.querySelector('#companies-list-less')
+
+      showMore.addEventListener('click', () => {
         for (const co of res.data.slice(10, 25)) {
           const row = document.createElement('tr')
           const coName = document.createElement('td')
@@ -196,12 +199,18 @@ function createCompaniesList() {
           row.append(coName, coNum)
           table.append(row)
         }
+
+        showMore.disabled = true
+        showLess.disabled = false
       })
 
-      document.querySelector('#companies-list-less').addEventListener('click', () => {
+      showLess.addEventListener('click', () => {
         while (table.childElementCount > 10) {
           table.removeChild(table.lastElementChild)
         }
+
+        showMore.disabled = false
+        showLess.disabled = true
       })
     })
 }
