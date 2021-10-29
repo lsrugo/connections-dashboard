@@ -7,55 +7,51 @@ const supabaseClient = supabase.createClient(API_URL, ANON_KEY);
 
 supabaseClient.auth.onAuthStateChange((event) => {
   if (event === "SIGNED_IN") {
-    loadConnections()
-      .then(res => {
-        populateCards(res.count)
+    // TODO filter by date imported/created
+    // supabase already filters by user
 
-        createPositionsChart()
-        createDatesChart(res.data)
-        createCompaniesList()
-      })
-      .then(() => document.querySelector('#message').textContent = '')
+    Promise.all([
+      populateCards(),
+      createPositionsChart(),
+      createDatesChart(),
+      createCompaniesList(),
+    ]).then(() => {
+      console.log('done')
+      document.querySelector('#message').textContent = '';
+    }).catch(err => {
+      console.error(err);
+      document.querySelector('#message').textContent = err.message;
+    })
   }
 })
 
-// load connections for current user
-async function loadConnections() {
-  // * TODO use separate query for each chart
-  // TODO make this more specific (filter dates)
-  // supabase filters by user
-  const res = await supabaseClient
+function populateCards() {
+  return supabaseClient
     .from('connections')
-    .select('position, company, connected_on', {
+    .select('id', {
       count: 'estimated'
-    });
+    })
+    .limit(1)
+    .single()
+    .then(res => {
+      if (res.error) {
+        throw res.error
+      }
 
-  if (res.error) {
-    console.error(res.error);
-    document.querySelector('#message').textContent = res.error.message
-    throw res.error.message
-    // TODO format error message on page
-  }
-
-  return res
-}
-
-function populateCards(count) {
-  const formattedCount = count.toLocaleString()
-  document.querySelector('#total-connections').textContent = formattedCount
+      const formattedCount = res.count.toLocaleString()
+      document.querySelector('#total-connections').textContent = formattedCount
+    })
 }
 
 function createPositionsChart() {
-  supabaseClient
+  return supabaseClient
     .from('positions_count')
     .select('*')
     // .limit(1)
     .single()
     .then(res => {
       if (res.error) {
-        console.error(res.error)
-        document.querySelector('#message').textContent = res.error.message
-        throw res.error.message
+        throw res.error
       }
 
       const positions = res.data
@@ -95,91 +91,90 @@ function createPositionsChart() {
     })
 }
 
-function createDatesChart(data) {
+function createDatesChart() {
   const dates = {}
 
   // const options = { month: 'long', timeZone: 'UTC' };
   // const dateFormatter = new Intl.DateTimeFormat('en-US', options);
 
-  // count number of connections for each month
-  for (const item of data) {
-    const date = new Date(item['connected_on'])
-    const year = date.getFullYear()
-    const month = date.getUTCMonth()
+  return supabaseClient
+    .from('dates_count')
+    .select('*')
+    .then(res => {
+      if (res.error) {
+        throw res.error
+      }
 
-    // create array for that year if it does not exist
-    if (dates[year] === undefined) {
-      dates[year] = []
-    }
+      const datesCount = res.data
+        
+      // organize date counts into object
+      for (const item of datesCount) {
+        const date = new Date(item['month'])
+        const year = date.getFullYear()
+        const month = date.getUTCMonth()
 
-    dates[year][month] ? dates[year][month] += 1 : dates[year][month] = 1;
-  }
-
-  console.log('dates array', dates)
-
-  const datasets = []
-
-  const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
-
-  // reformat to fit chart
-  for (const [year, yearList] of Object.entries(dates)) {
-    // TODO use set colors
-    const color = randomColor()
-    datasets.push({
-      label: String(year),
-      data: yearList,
-      backgroundColor: color,
-      borderColor: color
-    })
-  }
-
-  // TODO fix config
-  const config = {
-    type: 'line',
-    data: {
-      labels: months,
-      datasets: datasets
-    },
-    options: {
-      elements: {
-        line: {
-          tension: 0.4,
+        if (!dates[year]) {
+          dates[year] = []
         }
-      },
-      plugins: {
-        legend: {
-          display: true,
-          position: 'bottom',
-          align: 'end'
+
+        dates[year][month] = item['count'];
+      }
+
+      // reformat to fit chart
+      const datasets = Object.entries(dates).map(([year, months]) => {
+        // TODO use set colors
+        const color = randomColor()
+        return {
+          label: String(year),
+          data: months,
+          backgroundColor: color,
+          borderColor: color
+        }
+      })
+
+      const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+
+      // TODO fix config
+      const config = {
+        type: 'line',
+        data: {
+          labels: months,
+          datasets: datasets
+        },
+        options: {
+          elements: {
+            line: {
+              tension: 0.4,
+            }
+          },
+          plugins: {
+            legend: {
+              display: true,
+              position: 'bottom',
+              align: 'end'
+            }
+          }
         }
       }
-    }
-  }
 
-  new Chart(
-    document.getElementById('datesChart'),
-    config
-  );
+      new Chart(
+        document.getElementById('datesChart'),
+        config
+      );
+    })
 }
 
 function createCompaniesList() {
-  supabaseClient
+  return supabaseClient
     .from('companies_count')
     .select('*')
     .then(res => {
       if (res.error) {
-        console.error(res.error)
-        document.querySelector('#message').textContent = res.error.message
-        throw res.error.message
+        throw res.error
       }
 
-      const companies = res.data.sort((a, b) => b['count'] - a['count']).slice(0, 10)
-
-      // sort companies highest to lowest and take top 10
-      console.log('top 10 companies', companies)
-
       const table = document.querySelector('#companies-list')
-      for (const co of companies) {
+      for (const co of res.data.slice(0, 10)) {
         const row = document.createElement('tr')
         const coName = document.createElement('td')
         coName.textContent = co['company']
