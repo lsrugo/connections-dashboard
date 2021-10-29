@@ -13,7 +13,7 @@ module.exports = {
     extend: {},
   },
   plugins: [
-    // TODO install this if needed
+    // * install this if needed
     // require('@tailwindcss/forms')
   ],
 }
