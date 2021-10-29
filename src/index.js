@@ -106,7 +106,7 @@ function createDatesChart() {
       }
 
       const datesCount = res.data
-        
+
       // organize date counts into object
       for (const item of datesCount) {
         const date = new Date(item['month'])
@@ -185,7 +185,24 @@ function createCompaniesList() {
         table.append(row)
       }
 
-      // TODO enable show more and show less buttons for top 25 and 100
+      document.querySelector('#companies-list-more').addEventListener('click', () => {
+        for (const co of res.data.slice(10, 25)) {
+          const row = document.createElement('tr')
+          const coName = document.createElement('td')
+          coName.textContent = co['company']
+          const coNum = document.createElement('td')
+          coNum.textContent = co['count']
+          coNum.classList.add('text-center')
+          row.append(coName, coNum)
+          table.append(row)
+        }
+      })
+
+      document.querySelector('#companies-list-less').addEventListener('click', () => {
+        while (table.childElementCount > 10) {
+          table.removeChild(table.lastElementChild)
+        }
+      })
     })
 }
 
