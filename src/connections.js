@@ -54,7 +54,7 @@ supabaseClient.auth.onAuthStateChange((event) => {
                 })
 
             })
-            .then(() => document.querySelector('#message').textContent = '')
+            .then(() => document.body.classList.remove('loading'))
     }
 })
 
@@ -117,7 +117,7 @@ async function loadConnections() {
 
     if (res.error) {
         console.error(res.error);
-        document.querySelector('#message').textContent = res.error.message
+        // document.querySelector('#message').textContent = res.error.message
         throw res.error.message
         // TODO format error message on page
     }

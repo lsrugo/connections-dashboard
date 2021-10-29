@@ -14,8 +14,13 @@ document.querySelector('#edit-form').addEventListener('submit', saveConnection);
 async function loadSelectedConnection(id) {
     // leave form blank if no id is provided
     if (!id) {
+        // TODO remove ... from progress element without breaking the layout
+        // document.querySelector('#progress').textContent = '';
+        document.body.classList.remove('loading');
         return;
     }
+
+    document.body.classList.add('loading');
 
     if (count === undefined) {
         const countReq = await supabaseClient.from('connections').select('*', { count: 'estimated' }).limit(1);
@@ -46,6 +51,8 @@ async function loadSelectedConnection(id) {
             }
 
             document.querySelector('#edit-form textarea').innerText = res.data.notes || '';
+
+            document.body.classList.remove('loading');
         })
 }
 
@@ -53,6 +60,8 @@ function saveConnection(event) {
     event.preventDefault();
 
     console.log('saving form', id)
+
+    document.body.classList.add('loading');
 
     const formData = new FormData(event.target);
 
@@ -78,6 +87,7 @@ function saveConnection(event) {
 
                 console.log('new connection', res.data);
 
+                document.body.classList.remove('loading');
                 // redirect to connections.html
                 // location.href = '/connections.html';
             })
@@ -102,6 +112,7 @@ function saveConnection(event) {
                     return;
                 }
 
+                document.body.classList.remove('loading');
                 // redirect to connections.html
                 // location.href = '/connections.html';
             })

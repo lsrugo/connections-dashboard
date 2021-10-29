@@ -17,10 +17,10 @@ supabaseClient.auth.onAuthStateChange((event) => {
       createCompaniesList(),
     ]).then(() => {
       console.log('done')
-      document.querySelector('#message').textContent = '';
+      document.body.classList.remove('loading')
     }).catch(err => {
       console.error(err);
-      document.querySelector('#message').textContent = err.message;
+      // document.querySelector('#message').textContent = err.message;
     })
   }
 })
