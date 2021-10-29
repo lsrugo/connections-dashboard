@@ -4,14 +4,12 @@ const ANON_KEY = import.meta.env.VITE_ANON_KEY;
 const supabaseClient = supabase.createClient(API_URL, ANON_KEY);
 
 supabaseClient.auth.onAuthStateChange((event, session) => {
-    console.log(event, session)
+    console.log(event)
     if (event === "SIGNED_IN") {
         document.querySelector('body').classList.add('logged-in')
     }
     if (event === "SIGNED_OUT") {
         document.querySelector('body').classList.remove('logged-in')
-        // TODO change this to url of landing page
-        // window.location.href = '/login.html'
     }
 })
 
@@ -31,12 +29,15 @@ document.querySelector('#login').addEventListener('submit', async e => {
     })
     if (error) {
         console.error(error)
-        // TODO show error to user
-        document.querySelector('#message').textContent = error.message
+        document.querySelector('#login-message').classList.remove('bg-green-500')
+        document.querySelector('#login-message').classList.add('bg-red-500')
+        document.querySelector('#login-message').textContent = error.message
         return
     }
-    // TODO tell user to check inbox
     console.log('magic link sent')
+    document.querySelector('#login-message').classList.remove('bg-red-500')
+    document.querySelector('#login-message').classList.add('bg-green-500')
+    document.querySelector('#login-message').textContent = 'Check your email for a login link'
 })
 
 // handle sign out button
