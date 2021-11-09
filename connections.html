@@ -62,27 +62,25 @@
         <div class="bg-white rounded-lg shadow-lg p-4">
             <!-- <label for="search">Search</label>
             <input class="search border border-pink-600 rounded" id="search" /> -->
-            <div class="flex flex-col items-center border px-1 py-3 rounded-md">
-                <div class="flex items-center space-x-4">
-                    <h2 class="px-4 text-lg font-bold">Filters</h2>
-                    <label>
-                        First Name
-                        <input type="search" id="filter-first_name" class="ml-1 px-2 py-1 shadow border rounded"
-                            autocomplete="given-name" spellcheck="false" autocorrect="off">
-                    </label>
-                    <label>
-                        Last Name
-                        <input type="search" id="filter-last_name" class="ml-1 px-2 py-1 shadow border rounded"
-                            autocomplete="family-name" spellcheck="false" autocorrect="off">
-                    </label>
-                    <label>
-                        Company
-                        <input type="search" id="filter-company" class="ml-1 px-2 py-1 shadow border rounded"
-                            autocomplete="organization" spellcheck="false" autocorrect="off">
-                    </label>
-                    <p class="text-sm italic font-light">Press Enter to apply filters</p>
-                </div>
-            </div>
+            <form class="flex items-center space-x-4 border px-1 py-3 rounded-md" id="filters">
+                <h2 class="px-4 text-lg font-bold">Filters</h2>
+                <label>
+                    First Name
+                    <input type="search" id="filter-first_name" name="first_name" class="ml-1 px-2 py-1 shadow border rounded"
+                        autocomplete="given-name" spellcheck="false" autocorrect="off">
+                </label>
+                <label>
+                    Last Name
+                    <input type="search" id="filter-last_name" name="last_name" class="ml-1 px-2 py-1 shadow border rounded"
+                        autocomplete="family-name" spellcheck="false" autocorrect="off">
+                </label>
+                <label>
+                    Company
+                    <input type="search" id="filter-company" name="company" class="ml-1 px-2 py-1 shadow border rounded"
+                        autocomplete="organization" spellcheck="false" autocorrect="off">
+                </label>
+                <button class="cursor-pointer rounded shadow bg-red-500 hover:bg-red-700 text-sm font-semibold text-white px-3 py-1.5 mr-2" id="apply-filters">Apply</button>
+            </form>
             <table>
                 <thead>
                     <th id="first_name">
