@@ -43,7 +43,7 @@ async function loadSelectedConnection(id) {
 
             console.log('id', res.data.id);
 
-            document.querySelector('#progress').textContent = `${id} of ${count}`;
+            // document.querySelector('#progress').textContent = `${id} of ${count}`;
 
             // fill in form values with res.data
             for (const input of document.querySelectorAll('#edit-form input')) {
