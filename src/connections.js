@@ -5,7 +5,7 @@ const supabaseClient = supabase.createClient(API_URL, ANON_KEY);
 
 const queryState = {
     sort: [],
-    filter: []
+    filters: []
 }
 
 supabaseClient.auth.onAuthStateChange((event) => {
@@ -24,33 +24,40 @@ supabaseClient.auth.onAuthStateChange((event) => {
                 })
 
                 // add event listeners for filtering
-                document.querySelectorAll('input[id^="filter-"]').forEach(el => {
-                    el.addEventListener('change', async function () {
-                        // remove "filter-" from input id
-                        const col = this.id.slice(7)
+                document.querySelector('#filters').addEventListener('submit', async function (event) {
+                    event.preventDefault()
 
-                        queryState.filter = [col, '%'+this.value+'%']
-                        console.log('query state', queryState)
+                    queryState.filters = []
 
-                        let query = supabaseClient
-                            .from('connections')
-                            .select('*')
-                            .ilike(...queryState.filter)
-
-                        if (queryState.sort.length > 0) {
-                            query = query.order(...queryState.sort)
+                    for (const filter of new FormData(this)) {
+                        if (filter[1] === '') {
+                            continue
                         }
-                        
-                        const res = await query
+                        queryState.filters.push([filter[0], '%' + filter[1] + '%'])
+                    }
+                    console.log('query state', queryState)
 
-                        if (res.error) {
-                            console.error(res.error.message)
-                        }
+                    let query = supabaseClient
+                        .from('connections')
+                        .select('*')
 
-                        console.log('filter results', res.data)
+                    for (const filter of queryState.filters) {
+                        query = query.ilike(...filter)
+                    }
 
-                        replaceRows(res.data, tableEl)
-                    })
+                    if (queryState.sort.length > 0) {
+                        query = query.order(...queryState.sort)
+                    }
+
+                    const res = await query
+
+                    if (res.error) {
+                        console.error(res.error.message)
+                    }
+
+                    console.log('filter results', res.data)
+
+                    replaceRows(res.data, tableEl)
                 })
 
             })
@@ -83,18 +90,20 @@ async function handleSort(tableEl, colEl, col) {
         icon.classList.add('fa-sort-down')
     }
 
-    queryState.sort = [col, {ascending: asc}]
+    queryState.sort = [col, { ascending: asc }]
     console.log('query state', queryState)
 
     let query = supabaseClient
         .from('connections')
         .select('*')
         .order(...queryState.sort)
-    
-    if (queryState.filter.length > 0) {
-        query = query.ilike(...queryState.filter)
+
+    if (queryState.filters.length > 0) {
+        for (const filter of queryState.filters) {
+            query = query.ilike(...filter)
+        }
     }
-        
+
     const res = await query
 
     if (res.error) {
