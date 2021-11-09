@@ -52,6 +52,9 @@ async function loadSelectedConnection(id) {
 
             document.querySelector('#edit-form textarea').innerText = res.data.notes || '';
 
+            // fill in view on LinkedIn link
+            document.querySelector('#edit-form a').href = encodeURI(`https://www.linkedin.com/search/results/people/?company=${res.data.company}&firstName=${res.data.first_name}&lastName=${res.data.last_name}`);
+
             document.body.classList.remove('loading');
         })
 }
