@@ -11,10 +11,8 @@ const queryState = {
 supabaseClient.auth.onAuthStateChange((event) => {
     if (event === "SIGNED_IN") {
         loadConnections()
-            .then(res => {
+            .then(() => {
                 const tableEl = document.querySelector('table')
-
-                replaceRows(res.data, tableEl)
 
                 // document.querySelector('#search').addEventListener('input', (e) => connectionsList.search(e.target.value))
 
@@ -23,43 +21,10 @@ supabaseClient.auth.onAuthStateChange((event) => {
                     el.addEventListener('click', function () { handleSort(tableEl, this, this.id) })
                 })
 
-                // add event listeners for filtering
-                document.querySelector('#filters').addEventListener('submit', async function (event) {
-                    event.preventDefault()
-
-                    queryState.filters = []
-
-                    for (const filter of new FormData(this)) {
-                        if (filter[1] === '') {
-                            continue
-                        }
-                        queryState.filters.push([filter[0], '%' + filter[1] + '%'])
-                    }
-                    console.log('query state', queryState)
-
-                    let query = supabaseClient
-                        .from('connections')
-                        .select('*')
-
-                    for (const filter of queryState.filters) {
-                        query = query.ilike(...filter)
-                    }
-
-                    if (queryState.sort.length > 0) {
-                        query = query.order(...queryState.sort)
-                    }
-
-                    const res = await query
-
-                    if (res.error) {
-                        console.error(res.error.message)
-                    }
-
-                    console.log('filter results', res.data)
-
-                    replaceRows(res.data, tableEl)
-                })
-
+                // add event listener for filter submit
+                document.querySelector('#filters').addEventListener('submit', handleFilter)
+                // refresh the table when the filters are reset
+                document.querySelector('#reset-filters').addEventListener('click', handleFilterReset)
             })
             .then(() => document.body.classList.remove('loading'))
     }
@@ -93,36 +58,53 @@ async function handleSort(tableEl, colEl, col) {
     queryState.sort = [col, { ascending: asc }]
     console.log('query state', queryState)
 
-    let query = supabaseClient
-        .from('connections')
-        .select('*')
-        .order(...queryState.sort)
+    await loadConnections()
+}
 
-    if (queryState.filters.length > 0) {
-        for (const filter of queryState.filters) {
-            query = query.ilike(...filter)
+async function handleFilter(event) {
+    // prevent page reload
+    event.preventDefault()
+
+    queryState.filters = []
+
+    for (const filter of new FormData(this)) {
+        if (filter[1] === '') {
+            continue
         }
+        queryState.filters.push([filter[0], '%' + filter[1] + '%'])
     }
+    console.log('query state', queryState)
 
-    const res = await query
+    const res = await loadConnections()
 
-    if (res.error) {
-        console.error(res.error.message)
-    }
+    console.log('filter results', res.data)
+}
 
-    replaceRows(res.data, tableEl)
+async function handleFilterReset() {
+    queryState.filters = []
+    await loadConnections()
 }
 
 /**
- * load connections for current user
+ * load connections for current user with filters and sort
  */
 async function loadConnections() {
     // supabase filters by user
-    const res = await supabaseClient
+    let query = supabaseClient
         .from('connections')
         .select('*', {
             count: 'estimated'
         });
+
+    for (const filter of queryState.filters) {
+        query = query.ilike(...filter)
+    }
+
+    if (queryState.sort.length > 0) {
+        query = query.order(...queryState.sort)
+    }
+
+    const res = await query
 
     if (res.error) {
         console.error(res.error);
@@ -130,6 +112,11 @@ async function loadConnections() {
         throw res.error.message
         // TODO format error message on page
     }
+
+    const tableEl = document.querySelector('table')
+    replaceRows(res.data, tableEl)
+
+    // TODO show number of results
 
     return res
 }
