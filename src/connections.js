@@ -89,6 +89,9 @@ async function handleFilterReset() {
  * load connections for current user with filters and sort
  */
 async function loadConnections() {
+    const resultsEl = document.querySelector('#results-count')
+    resultsEl.textContent = ''
+
     // supabase filters by user
     let query = supabaseClient
         .from('connections')
@@ -116,7 +119,14 @@ async function loadConnections() {
     const tableEl = document.querySelector('table')
     replaceRows(res.data, tableEl)
 
-    // TODO show number of results
+    // show number of results
+    if (res.count === 0) {
+        resultsEl.textContent = 'No results found'
+    } else if (res.count === 1) {
+        resultsEl.textContent = 'Showing 1 result'
+    } else {
+        resultsEl.textContent = `Showing ${res.count} results`
+    }
 
     return res
 }
