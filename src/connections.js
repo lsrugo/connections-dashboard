@@ -5,7 +5,9 @@ const supabaseClient = supabase.createClient(API_URL, ANON_KEY);
 
 const queryState = {
     sort: [],
-    filters: []
+    filters: [],
+    pageSize: 100,
+    pageNumber: 1
 }
 
 supabaseClient.auth.onAuthStateChange((event) => {
@@ -25,6 +27,10 @@ supabaseClient.auth.onAuthStateChange((event) => {
                 document.querySelector('#filters').addEventListener('submit', handleFilter)
                 // refresh the table when the filters are reset
                 document.querySelector('#reset-filters').addEventListener('click', handleFilterReset)
+
+                const pageNav = document.querySelector('#page-nav')
+                pageNav.querySelector('#next').addEventListener('click', nextPage)
+                pageNav.querySelector('#prev').addEventListener('click', prevPage)
             })
             .then(() => document.body.classList.remove('loading'))
     }
@@ -37,6 +43,8 @@ supabaseClient.auth.onAuthStateChange((event) => {
  * @param {string} col the column name to sort by
  */
 async function handleSort(tableEl, colEl, col) {
+    queryState.pageNumber = 1
+
     // reset all icons to both arrows
     for (const icon of tableEl.querySelectorAll('i')) {
         icon.classList.remove('fa-sort-up')
@@ -65,6 +73,7 @@ async function handleFilter(event) {
     // prevent page reload
     event.preventDefault()
 
+    queryState.pageNumber = 1
     queryState.filters = []
 
     for (const filter of new FormData(this)) {
@@ -81,8 +90,21 @@ async function handleFilter(event) {
 }
 
 async function handleFilterReset() {
+    queryState.pageNumber = 1
     queryState.filters = []
     await loadConnections()
+}
+
+async function nextPage() {
+    queryState.pageNumber++
+    await loadConnections()
+}
+
+async function prevPage() {
+    if (queryState.pageNumber > 1) {
+        queryState.pageNumber--
+        await loadConnections()
+    }
 }
 
 /**
@@ -92,12 +114,16 @@ async function loadConnections() {
     const resultsEl = document.querySelector('#results-count')
     resultsEl.textContent = ''
 
+    const startIndex = (queryState.pageNumber - 1) * queryState.pageSize
+    const endIndex = startIndex + queryState.pageSize - 1
+
     // supabase filters by user
     let query = supabaseClient
         .from('connections')
         .select('*', {
             count: 'estimated'
-        });
+        })
+        .range(startIndex, endIndex);
 
     for (const filter of queryState.filters) {
         query = query.ilike(...filter)
@@ -125,8 +151,14 @@ async function loadConnections() {
     } else if (res.count === 1) {
         resultsEl.textContent = 'Showing 1 result'
     } else {
-        resultsEl.textContent = `Showing ${res.count} results`
+        resultsEl.textContent = `Showing ${res.data.length} of ${res.count} results`
     }
+
+    document.querySelector('#page-num').textContent = 'Page ' + String(queryState.pageNumber)
+    // disable prev page if on first page
+    document.querySelector('#prev').disabled = queryState.pageNumber === 1
+    // disable next page if on last page
+    document.querySelector('#next').disabled = res.data.length < queryState.pageSize
 
     return res
 }
