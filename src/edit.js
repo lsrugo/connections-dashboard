@@ -1,7 +1,4 @@
-/*global supabase*/
-const API_URL = import.meta.env.VITE_API_URL;
-const ANON_KEY = import.meta.env.VITE_ANON_KEY;
-const supabaseClient = supabase.createClient(API_URL, ANON_KEY);
+import supabaseClient from './login.js'
 
 let id = new URLSearchParams(location.search).get('id');
 

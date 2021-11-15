@@ -42,3 +42,5 @@ document.querySelector('#login').addEventListener('submit', async e => {
 
 // handle sign out button
 document.querySelector('#sign-out').addEventListener('click', () => supabaseClient.auth.signOut())
+
+export default supabaseClient

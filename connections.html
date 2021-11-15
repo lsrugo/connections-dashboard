@@ -66,8 +66,9 @@
                 <h2 class="pr-4 text-lg font-bold">Filters</h2>
                 <label>
                     First Name
-                    <input type="search" id="filter-first_name" name="first_name" class="px-2 py-1 shadow border rounded"
-                        autocomplete="given-name" spellcheck="false" autocorrect="off">
+                    <input type="search" id="filter-first_name" name="first_name"
+                        class="px-2 py-1 shadow border rounded" autocomplete="given-name" spellcheck="false"
+                        autocorrect="off">
                 </label>
                 <label>
                     Last Name
@@ -79,10 +80,12 @@
                     <input type="search" id="filter-company" name="company" class="px-2 py-1 shadow border rounded"
                         autocomplete="organization" spellcheck="false" autocorrect="off">
                 </label>
-                <button type="submit" class="cursor-pointer rounded shadow bg-red-500 hover:bg-red-700 font-semibold text-white px-3 py-1 mr-1">
+                <button type="submit"
+                    class="cursor-pointer rounded shadow bg-red-500 hover:bg-red-700 font-semibold text-white px-3 py-1 mr-1">
                     <i class="far fa-check-circle"></i>
                 </button>
-                <button type="reset" id="reset-filters" class="cursor-pointer rounded shadow border border-red-500 text-red-500 hover:bg-red-100 font-semibold bg-white px-3 py-1">
+                <button type="reset" id="reset-filters"
+                    class="cursor-pointer rounded shadow border border-red-500 text-red-500 hover:bg-red-100 font-semibold bg-white px-3 py-1">
                     <i class="far fa-times-circle"></i>
                 </button>
             </form>
@@ -120,11 +123,13 @@
             <div class="flex items-center justify-between mt-3">
                 <p id="results-count" class="text-right"></p>
                 <div id="page-nav" class="flex items-center">
-                    <button id="prev" class="cursor-pointer rounded shadow bg-red-500 hover:bg-red-700 font-semibold text-white px-3 py-1 disabled:opacity-50 disabled:cursor-not-allowed">
+                    <button id="prev"
+                        class="cursor-pointer rounded shadow bg-red-500 hover:bg-red-700 font-semibold text-white px-3 py-1 disabled:opacity-50 disabled:cursor-not-allowed">
                         <i class="fas fa-chevron-left"></i>
                     </button>
                     <p class="mx-2" id="page-num">Page Number</p>
-                    <button id="next" class="cursor-pointer rounded shadow bg-red-500 hover:bg-red-700 font-semibold text-white px-3 py-1 disabled:opacity-50 disabled:cursor-not-allowed">
+                    <button id="next"
+                        class="cursor-pointer rounded shadow bg-red-500 hover:bg-red-700 font-semibold text-white px-3 py-1 disabled:opacity-50 disabled:cursor-not-allowed">
                         <i class="fas fa-chevron-right"></i>
                     </button>
                 </div>
@@ -132,8 +137,8 @@
         </div>
     </main>
 
-    <script type="module" src="/src/login.js"></script>
     <script type="module" src="/src/connections.js"></script>
+    <script type="module" src="/src/import.js"></script>
 
     <!-- supabase https://supabase.io -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
