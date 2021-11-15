@@ -226,6 +226,8 @@ document.querySelector("#import").addEventListener("change", (e) => {
  * @param {File} file The CSV file being imported
  */
 function importConnections(file) {
+  document.body.classList.add('loading')
+
   const startingString =
     'Notes:\n"When exporting your connection data, you may notice that some of the email addresses are missing. You will only see email addresses for connections who have allowed their connections to see or download their email address using this setting https://www.linkedin.com/psettings/privacy/email. You can learn more here https://www.linkedin.com/help/linkedin/answer/261"\n\n';
   Papa.parse(file, {
@@ -237,7 +239,13 @@ function importConnections(file) {
     },
     complete: (results) => {
       console.log(results);
-      // TODO handle errors
+
+      if (results.errors.length > 0) {
+        const lineNumbers = results.errors.map(error => error.row).join(', ')
+        alert(`Import failed on ${results.errors.length > 1 ? 'lines' : 'line'} ${lineNumbers}. Please correct the errors and try again.`)
+        document.body.classList.remove('loading')
+        return;
+      }
 
       const user_id = supabaseClient.auth.user().id
 
@@ -261,6 +269,7 @@ function importConnections(file) {
           } else {
             console.log('success', res.data)
           }
+          document.body.classList.remove('loading')
         })
     }
   });
