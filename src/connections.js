@@ -170,16 +170,29 @@ async function loadConnections() {
 function insertRow(row, index, table) {
     const rowEl = table.insertRow(index)
 
+    const linkedinUrl = encodeURI(`https://www.linkedin.com/search/results/people/?company=${row.company}&firstName=${row.first_name}&lastName=${row.last_name}`)
+    const googleUrl = encodeURI(`https://www.google.com/search?q=${row.first_name}+${row.last_name}+${row.company}`)
+
     rowEl.innerHTML = `
-    <td class="first_name">${row.first_name}</td>
-    <td class="last_name">${row.last_name}</td>
-    <td class="company">${row.company}</td>
-    <td class="position">${row.position || ''}</td>
-    <td class="email">${row.email}</td>
-    <td class="connected_on">${row.connected_on}</td>
-    <a href="/edit.html?id=${row.id}" id="edit-${row.id}" class="block p-2 mx-1 my-3 hover:bg-gray-200 active:bg-gray-300 rounded-md">
-        <i class="fas fa-edit"></i>
-    </a>
+    <td>${row.first_name}</td>
+    <td>${row.last_name}</td>
+    <td class="truncate max-w-xs">${row.company}</td>
+    <td class="truncate max-w-xs">${row.position || ''}</td>
+    <td class="truncate max-w-xs">${row.email}</td>
+    <td>${row.connected_on}</td>
+    <div class="flex items-center">
+        <a href="${linkedinUrl}" target="_blank" rel="noopener noreferrer"
+            class="block p-2 hover:bg-gray-200 rounded">
+            <img src="/iconmonstr-linkedin-3.svg" alt="LinkedIn Search Icon">
+        </a>
+        <a href="${googleUrl}" target="_blank" rel="noopener noreferrer"
+            class="block p-2 fill-current text-black hover:bg-gray-200 rounded">
+            <img src="/google-logo.svg" alt="Google Search Icon">
+        </a>
+        <a href="/edit.html?id=${row.id}" id="edit-${row.id}" class="block p-2 hover:bg-gray-200 active:bg-gray-300 rounded-md">
+            <i class="fas fa-edit"></i>
+        </a>
+    </div>
     `
 
     return rowEl
