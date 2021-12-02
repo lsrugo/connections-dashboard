@@ -15,14 +15,6 @@ th, td {
     text-align: left;
 }
 
-tbody tr:nth-child(odd) {
-    background: #eee;
-}
-
-tbody {
-    border-bottom: #eee 1px solid;
-}
-
 .loading > main {
     display: none;
 }
@@ -31,7 +23,7 @@ tbody {
     display: none;
 }
 
-:not(.loading) > div > #spinner {
+:not(.loading) > #spinner {
     display: none;
 }
 
@@ -39,9 +31,10 @@ tbody {
 .spinner {
     width: 40px;
     height: 40px;
-    background-color: rgb(255, 255, 255);
+    position: absolute;
+    top: 50%;
+    left: 50%;
 
-    margin: 100px auto;
     -webkit-animation: sk-rotateplane 1.2s infinite ease-in-out;
     animation: sk-rotateplane 1.2s infinite ease-in-out;
     }
