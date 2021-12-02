@@ -176,7 +176,10 @@ function createCompaniesList() {
         coName.textContent = co['company']
         const coNum = document.createElement('td')
         coNum.textContent = co['count']
+
+        coName.classList.add('truncate')
         coNum.classList.add('text-center')
+
         row.append(coName, coNum)
         table.append(row)
       }
@@ -191,7 +194,10 @@ function createCompaniesList() {
           coName.textContent = co['company']
           const coNum = document.createElement('td')
           coNum.textContent = co['count']
+          
+          coName.classList.add('truncate')
           coNum.classList.add('text-center')
+
           row.append(coName, coNum)
           table.append(row)
         }
