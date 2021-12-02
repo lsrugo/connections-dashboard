@@ -13,12 +13,27 @@
 <body class="bg-gray-50 loading">
     <noscript>You need to enable JavaScript to run this app.</noscript>
 
-    <nav
-        class="absolute top-0 left-0 w-full z-10 bg-transparent md:flex-row md:flex-nowrap md:justify-start flex items-center p-4">
-        <div class="items-center flex justify-between md:flex-nowrap flex-wrap md:px-10 px-4 py-2 space-x-4">
-            <a class="text-white text-sm uppercase font-semibold hover:underline" href="/index.html">Dashboard</a>
-            <a class="text-white text-sm uppercase font-semibold hover:underline"
-                href="/connections.html">Connections</a>
+    <nav class="login-required fixed top-0 left-0 h-full z-10 bg-blue-200 text-gray-600">
+        <div class="flex flex-col items-center justify-center space-y-4 h-full p-2">
+            <a class="hover:bg-blue-300 h-10 w-10 rounded grid group" href="/index.html">
+                <!-- dashboard icon svg -->
+                <svg class="m-auto fill-current" width="24px" height="24px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <g>
+                        <path
+                            d="M13 21V11h8v10h-8zM3 13V3h8v10H3zm6-2V5H5v6h4zM3 21v-6h8v6H3zm2-2h4v-2H5v2zm10 0h4v-6h-4v6zM13 3h8v6h-8V3zm2 2v2h4V5h-4z" />
+                    </g>
+                </svg>
+                <p class="invisible group-hover:visible p-1 absolute left-11 h-10 leading-8 rounded bg-blue-300">Dashboard
+                </p>
+            </a>
+            <div class="bg-blue-300 h-10 w-10 rounded grid group">
+                <i class="fas fa-users m-auto p-1 text-lg"></i>
+                <p class="invisible absolute left-11 h-10 leading-8 rounded group-hover:visible p-1 bg-blue-300">Connections</p>
+            </div>
+            <button class="rounded hover:bg-blue-300 h-10 w-10 grid group" id="sign-out">
+                <i class="fas fa-sign-out-alt m-auto text-lg"></i>
+                <p class="invisible absolute left-11 h-10 leading-8 rounded group-hover:visible p-1 bg-blue-300 w-20">Sign Out</p>
+            </button>
         </div>
     </nav>
 
@@ -37,32 +52,23 @@
 
     <section class="login-required flex absolute top-4 right-6 z-10">
         <label for="import"
-            class="text-white text-sm font-semibold rounded-lg bg-red-500 hover:bg-red-700 px-4 py-3 shadow-lg cursor-pointer mr-2">
+            class="text-white text-sm font-semibold rounded-lg bg-blue-500 hover:bg-blue-700 px-4 py-3 shadow-lg cursor-pointer mr-2">
             <i class="fas fa-file-import mr-0.5"></i>
             Import
         </label>
         <input type="file" id="import" hidden />
-
-        <button
-            class="text-white text-sm font-semibold rounded-lg bg-red-500 hover:bg-red-700 px-4 py-3 shadow-lg cursor-pointer"
-            id="sign-out">
-            <i class="fas fa-sign-out-alt"></i>
-            Sign Out
-        </button>
     </section>
 
-    <!-- Header -->
-    <div class="login-required bg-pink-600 md:pt-28 pb-32 pt-12">
-        <div class="spinner mx-auto" id="spinner"></div>
-    </div>
+    <div class="spinner bg-blue-200" id="spinner"></div>
 
     <p id="message" role="status"></p>
     <!-- main table -->
-    <main class="login-required p-2 flex flex-wrap justify-center mx-auto -m-32 lg:w-3/4">
-        <div class="bg-white rounded-lg shadow-lg p-4">
+    <main class="login-required p-2 flex flex-wrap mt-16 ml-16">
+        <div class="px-3 py-2">
+            <h1 class="text-left w-full text-2xl font-bold mb-2 ml-1">Connections</h1>
             <!-- <label for="search">Search</label>
             <input class="search border border-pink-600 rounded" id="search" /> -->
-            <form class="flex items-center space-x-4 border px-4 py-3 rounded-md" id="filters">
+            <form class="flex items-center space-x-4 border px-4 py-3 rounded-md bg-blue-100 shadow" id="filters">
                 <h2 class="pr-4 text-lg font-bold">Filters</h2>
                 <label>
                     First Name
@@ -81,15 +87,16 @@
                         autocomplete="organization" spellcheck="false" autocorrect="off">
                 </label>
                 <button type="submit"
-                    class="cursor-pointer rounded shadow bg-red-500 hover:bg-red-700 font-semibold text-white px-3 py-1 mr-1">
+                    class="cursor-pointer rounded shadow bg-blue-500 hover:bg-blue-700 font-semibold text-white px-3 py-1 mr-1">
                     <i class="far fa-check-circle"></i>
                 </button>
                 <button type="reset" id="reset-filters"
-                    class="cursor-pointer rounded shadow border border-red-500 text-red-500 hover:bg-red-100 font-semibold bg-white px-3 py-1">
+                    class="cursor-pointer rounded shadow border border-blue-500 text-blue-500 hover:bg-blue-100 font-semibold bg-white px-3 py-1">
                     <i class="far fa-times-circle"></i>
                 </button>
             </form>
-            <table>
+            <!-- TODO: change min width on mobile -->
+            <table class="min-w-[1212px]">
                 <thead>
                     <th id="first_name" class="cursor-pointer">
                         First Name
@@ -116,7 +123,7 @@
                         <i class="fas fa-sort"></i>
                     </th>
                 </thead>
-                <tbody class="list">
+                <tbody class="border-b-2 border-blue-100">
                     <!-- table rows are inserted here -->
                 </tbody>
             </table>
@@ -124,12 +131,12 @@
                 <p id="results-count" class="text-right"></p>
                 <div id="page-nav" class="flex items-center">
                     <button id="prev"
-                        class="cursor-pointer rounded shadow bg-red-500 hover:bg-red-700 font-semibold text-white px-3 py-1 disabled:opacity-50 disabled:cursor-not-allowed">
+                        class="cursor-pointer rounded shadow bg-blue-500 hover:bg-blue-700 font-semibold text-white px-3 py-1 disabled:opacity-50 disabled:cursor-not-allowed">
                         <i class="fas fa-chevron-left"></i>
                     </button>
                     <p class="mx-2" id="page-num">Page Number</p>
                     <button id="next"
-                        class="cursor-pointer rounded shadow bg-red-500 hover:bg-red-700 font-semibold text-white px-3 py-1 disabled:opacity-50 disabled:cursor-not-allowed">
+                        class="cursor-pointer rounded shadow bg-blue-500 hover:bg-blue-700 font-semibold text-white px-3 py-1 disabled:opacity-50 disabled:cursor-not-allowed">
                         <i class="fas fa-chevron-right"></i>
                     </button>
                 </div>
