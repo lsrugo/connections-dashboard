@@ -179,6 +179,7 @@ function createCompaniesList() {
 
         coName.classList.add('truncate')
         coNum.classList.add('text-center')
+        row.classList.add('border-b-2', 'border-blue-100')
 
         row.append(coName, coNum)
         table.append(row)
@@ -197,6 +198,7 @@ function createCompaniesList() {
           
           coName.classList.add('truncate')
           coNum.classList.add('text-center')
+          row.classList.add('border-b-2', 'border-blue-100')
 
           row.append(coName, coNum)
           table.append(row)
