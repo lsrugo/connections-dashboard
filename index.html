@@ -10,18 +10,36 @@
   <meta charset="UTF-8" />
 </head>
 
-<body class="bg-gray-50 loading">
+<body class="bg-gray-50 text-black loading">
   <noscript>You need to enable JavaScript to run this app.</noscript>
 
-  <nav
-    class="absolute top-0 left-0 w-full z-10 bg-transparent md:flex-row md:flex-nowrap md:justify-start flex items-center p-4">
-    <div class="items-center flex justify-between md:flex-nowrap flex-wrap md:px-10 px-4 py-2 space-x-4">
-      <a class="text-white text-sm uppercase font-semibold hover:underline" href="/index.html">Dashboard</a>
-      <a class="text-white text-sm uppercase font-semibold hover:underline" href="/connections.html">Connections</a>
+  <nav class="login-required fixed top-0 left-0 h-full z-10 bg-blue-200 text-gray-600">
+    <div class="flex flex-col items-center justify-center space-y-4 h-full p-2">
+      <div class="bg-blue-300 h-10 w-10 rounded grid group">
+        <!-- dashboard icon svg -->
+        <svg class="m-auto fill-current" width="24px" height="24px" viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg">
+          <g>
+            <path
+              d="M13 21V11h8v10h-8zM3 13V3h8v10H3zm6-2V5H5v6h4zM3 21v-6h8v6H3zm2-2h4v-2H5v2zm10 0h4v-6h-4v6zM13 3h8v6h-8V3zm2 2v2h4V5h-4z" />
+          </g>
+        </svg>
+        <p class="invisible group-hover:visible p-1 absolute left-11 h-10 leading-8 rounded bg-blue-300">Dashboard
+        </p>
+      </div>
+      <a class="hover:bg-blue-300 h-10 w-10 rounded grid group" href="/connections.html">
+        <i class="fas fa-users m-auto p-1 text-lg"></i>
+        <p class="invisible absolute left-11 h-10 leading-8 rounded group-hover:visible p-1 bg-blue-300">Connections</p>
+      </a>
+      <button class="rounded hover:bg-blue-300 h-10 w-10 grid group" id="sign-out">
+        <i class="fas fa-sign-out-alt m-auto text-lg"></i>
+        <p class="invisible absolute left-11 h-10 leading-8 rounded group-hover:visible p-1 bg-blue-300 w-20">Sign Out
+        </p>
+      </button>
     </div>
   </nav>
 
-  <section class="pre-login w-full bg-pink-600 md:pt-32 pb-32 pt-12">
+  <section class="pre-login w-full bg-blue-500 md:pt-32 pb-32 pt-12">
     <form id="login" class="flex flex-col px-24 w-1/2 mx-auto">
       <p id="login-message" role="status" class="text-center text-white mb-2 p-2 rounded-lg"></p>
       <input name="email" type="email" autocomplete="email" placeholder="Email address"
@@ -36,117 +54,129 @@
 
   <section class="login-required flex absolute top-4 right-6 z-10">
     <label for="import"
-      class="text-white text-sm font-semibold rounded-lg bg-red-500 hover:bg-red-700 px-4 py-3 shadow-lg cursor-pointer mr-2">
+      class="text-white text-sm font-semibold rounded-lg bg-blue-500 hover:bg-blue-700 px-4 py-3 shadow-lg cursor-pointer mr-2">
       <i class="fas fa-file-import mr-0.5"></i>
       Import
     </label>
     <input type="file" id="import" hidden />
-
-    <button
-      class="text-white text-sm font-semibold rounded-lg bg-red-500 hover:bg-red-700 px-4 py-3 shadow-lg cursor-pointer"
-      id="sign-out">
-      <i class="fas fa-sign-out-alt"></i>
-      Sign Out
-    </button>
   </section>
 
-  <!-- Header -->
-  <div class="login-required bg-pink-600 md:pt-28 pb-28 pt-12">
-    <div class="spinner mx-auto" id="spinner"></div>
-    <div id="cards" class="mx-auto w-full md:w-3/4">
-      <!-- Card stats -->
-      <div class="flex flex-wrap justify-center">
-        <div class="w-full mx-2" style="width: 350px;">
-          <div class="relative flex flex-col min-w-0 break-words bg-white rounded mb-4 xl:mb-0 shadow-lg">
-            <div class="flex-auto m-4">
-              <div class="flex flex-wrap">
-                <div class="relative w-full pr-4 max-w-full flex-grow flex-1">
-                  <h5 class="text-blueGray-400 uppercase font-bold text-xs">
-                    Connections
-                  </h5>
-                  <span class="font-semibold text-xl text-blueGray-700" id="total-connections">
-                    ...
-                  </span>
-                </div>
-                <div class="relative w-auto pl-4 flex-initial">
-                  <div
-                    class="text-white p-3 text-center inline-flex items-center justify-center w-12 h-12 shadow-lg rounded-full bg-pink-500">
-                    <i class="fas fa-users"></i>
-                  </div>
-                </div>
+  <div class="spinner bg-blue-200" id="spinner"></div>
+
+  <main class="login-required p-2 mt-16 mx-16 grid grid-cols-3 grid-rows-[2rem, 1fr, 1fr] gap-3">
+    <h1 class="h-10 text-left text-2xl font-bold ml-1 col-start-1 col-span-3 row-start-1">Dashboard</h1>
+    <!-- cards -->
+    <div id="cards" class="col-start-1 row-start-2 flex flex-col space-y-3">
+      <div class="relative flex flex-col bg-white rounded shadow-lg">
+        <div class="flex-auto m-4">
+          <div class="flex flex-wrap">
+            <div class="relative w-full pr-4 max-w-full flex-grow flex-1">
+              <h5 class="text-black uppercase font-bold text-xs">
+                Total Connections
+              </h5>
+              <span class="font-semibold text-xl text-[#000022]" id="total-connections">
+                ...
+              </span>
+            </div>
+            <div class="relative w-auto pl-4 flex-initial">
+              <div
+                class="text-white p-3 text-center inline-flex items-center justify-center w-12 h-12 shadow-lg rounded-full bg-blue-500">
+                <i class="fas fa-users"></i>
               </div>
-              <p class="text-sm text-blueGray-400 mt-4">
-                <span class="text-orange-500 mr-2">
-                  <i class="fas fa-arrow-down"></i> 1.10%
-                </span>
-                <span class="whitespace-nowrap">
-                  Since yesterday
-                </span>
-              </p>
             </div>
           </div>
         </div>
-        <div class="w-full mx-2" style="width: 350px;">
-          <div class="relative flex flex-col min-w-0 break-words bg-white rounded mb-4 xl:mb-0 shadow-lg">
-            <div class="flex-auto p-4">
-              <div class="flex flex-wrap">
-                <div class="relative w-full pr-4 max-w-full flex-grow flex-1">
-                  <h5 class="text-blueGray-400 uppercase font-bold text-xs">
-                    Traffic
-                  </h5>
-                  <span class="font-semibold text-xl text-blueGray-700">
-                    350,897
-                  </span>
-                </div>
-                <div class="relative w-auto pl-4 flex-initial">
-                  <div
-                    class="text-white p-3 text-center inline-flex items-center justify-center w-12 h-12 shadow-lg rounded-full bg-red-500">
-                    <i class="far fa-chart-bar"></i>
-                  </div>
-                </div>
+      </div>
+      <div class="relative flex flex-col bg-white rounded shadow-lg">
+        <div class="flex-auto p-4">
+          <div class="flex flex-wrap">
+            <div class="relative w-full pr-4 max-w-full flex-grow flex-1">
+              <h5 class="text-blueGray-400 uppercase font-bold text-xs">
+                Recognized Connections
+              </h5>
+              <span class="font-semibold text-xl text-blueGray-700">
+                123,456
+              </span>
+            </div>
+            <div class="relative w-auto pl-4 flex-initial">
+              <div
+                class="text-white text-lg text-center inline-flex items-center justify-center w-12 h-12 shadow-lg rounded-full bg-green-500">
+                <i class="far fa-check"></i>
               </div>
-              <p class="text-sm text-blueGray-400 mt-4">
-                <span class="text-emerald-500 mr-2">
-                  <i class="fas fa-arrow-up"></i> 3.48%
-                </span>
-                <span class="whitespace-nowrap">
-                  Since last month
-                </span>
-              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="relative flex flex-col bg-white rounded shadow-lg">
+        <div class="flex-auto p-4">
+          <div class="flex flex-wrap">
+            <div class="relative w-full pr-4 max-w-full flex-grow flex-1">
+              <h5 class="text-blueGray-400 uppercase font-bold text-xs">
+                Non-recognized Connections
+              </h5>
+              <span class="font-semibold text-xl text-blueGray-700">
+                123,456
+              </span>
+            </div>
+            <div class="relative w-auto pl-4 flex-initial">
+              <div
+                class="text-white text-lg text-center inline-flex items-center justify-center w-12 h-12 shadow-lg rounded-full bg-red-500">
+                <i class="far fa-times"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="relative flex flex-col bg-white rounded shadow-lg">
+        <div class="flex-auto p-4">
+          <div class="flex flex-wrap">
+            <div class="relative w-full pr-4 max-w-full flex-grow flex-1">
+              <h5 class="text-blueGray-400 uppercase font-bold text-xs">
+                Pending Connections
+              </h5>
+              <span class="font-semibold text-xl text-blueGray-700">
+                123,456
+              </span>
+            </div>
+            <div class="relative w-auto pl-4 flex-initial">
+              <div
+                class="text-white text-lg text-center inline-flex items-center justify-center w-12 h-12 shadow-lg rounded-full bg-yellow-500">
+                <i class="far fa-clock"></i>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-
-  <!-- flex container with all the charts -->
-  <main class="login-required p-2 flex flex-wrap justify-center mx-auto -m-24 lg:w-3/4">
-    <div class="m-2 shadow-lg rounded bg-white p-4" style="width: 350px;">
+    <!-- charts -->
+    <div class="shadow-lg rounded bg-white p-4 col-start-2 row-start-3">
       <h2 class="text-center text-lg font-bold">Positions</h2>
       <canvas id="positionsChart"></canvas>
     </div>
-    <div class="m-2 shadow-lg rounded p-4 bg-white" style="width: 350px;">
+    <div class="shadow-lg rounded p-4 bg-white row-start-3">
       <h2 class="text-center text-lg font-bold">Top Companies</h2>
-      <table>
+      <table class="table-fixed w-full">
         <thead>
-          <tr>
+          <tr class="border-b-2 border-blue-100">
             <th>Company</th>
-            <th>Connections</th>
+            <th class="w-28">Connections</th>
           </tr>
         </thead>
-        <tbody id="companies-list">
+        <tbody id="companies-list" class="truncate">
           <!-- companies are inserted here -->
         </tbody>
       </table>
       <div class="flex justify-evenly">
-        <button class="text-blue-500 underline disabled:opacity-50" id="companies-list-more">Show More</button>
-        <button class="text-blue-500 underline disabled:opacity-50" id="companies-list-less" disabled>Show Less</button>
+        <button class="text-blue underline disabled:opacity-50" id="companies-list-more">Show More</button>
+        <button class="text-blue underline disabled:opacity-50" id="companies-list-less" disabled>Show Less</button>
       </div>
     </div>
-    <div class="w-full md:w-3/4 lg:w-1/2 m-2 rounded shadow-lg bg-white p-3">
+    <div class="rounded shadow-lg bg-white p-3 col-start-2 row-start-2 col-span-2">
       <h2 class="text-center text-lg font-bold">New Connections</h2>
-      <canvas id="datesChart"></canvas>
+      <canvas id="datesChart" class="max-h-72"></canvas>
+    </div>
+    <div class="rounded shadow-lg bg-white p-3 col-start-3 row-start-3 col-span-1">
+      <h2 class="text-center text-lg font-bold">Something Goes Here</h2>
     </div>
   </main>
 
