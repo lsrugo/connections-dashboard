@@ -169,6 +169,7 @@ async function loadConnections() {
  */
 function insertRow(row, index, table) {
     const rowEl = table.insertRow(index)
+    rowEl.classList.add('odd:bg-blue-100')
 
     const linkedinUrl = encodeURI(`https://www.linkedin.com/search/results/people/?company=${row.company}&firstName=${row.first_name}&lastName=${row.last_name}`)
     const googleUrl = encodeURI(`https://www.google.com/search?q=${row.first_name}+${row.last_name}+${row.company}`)
