@@ -4,7 +4,10 @@ let id = new URLSearchParams(location.search).get('id');
 
 let count;
 
-loadSelectedConnection(id);
+// load data for selected id if signed in
+if (supabaseClient.auth.user()) {
+    loadSelectedConnection(id);
+}
 
 document.querySelector('#edit-form').addEventListener('submit', saveConnection);
 
