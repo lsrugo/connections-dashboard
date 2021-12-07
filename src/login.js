@@ -19,6 +19,8 @@ document.querySelector('#login').addEventListener('submit', async e => {
     // https://stackoverflow.com/a/37146788/10056307
     e.preventDefault()
 
+    document.body.classList.add('loading')
+
     const formData = new FormData(e.target)
     const { error } = await supabaseClient.auth.signIn({
         email: formData.get('email'),
@@ -32,15 +34,22 @@ document.querySelector('#login').addEventListener('submit', async e => {
         loginMessage.classList.remove('bg-green-500')
         loginMessage.classList.add('bg-red-500')
         loginMessage.textContent = error.message
+
+        document.body.classList.remove('loading')
+
         return
     }
     console.log('magic link sent')
     loginMessage.classList.add('bg-green-500')
     loginMessage.classList.remove('bg-red-500')
     loginMessage.textContent = 'Check your email for a login link'
+    
+    document.body.classList.remove('loading')
 })
 
 // handle sign out button
 document.querySelector('#sign-out').addEventListener('click', () => supabaseClient.auth.signOut())
+
+document.body.classList.remove('loading')
 
 export default supabaseClient
