@@ -11,8 +11,23 @@ document.querySelector("#import").addEventListener("change", (e) => {
    *
    * @param {File} file The CSV file being imported
    */
-  function importConnections(file) {
-    document.body.classList.add('loading')
+  async function importConnections(file) {
+    document.body.classList.add('loading');
+
+    if (file.type === "application/zip") {
+      console.log(file.type);
+
+      // TODO: check for import browser support
+      const JSZip = await import("https://cdn.skypack.dev/jszip");
+      const zip = JSZip.default();
+      // TODO: add error handling
+      const zipFile = await zip.loadAsync(file);
+      file = await zipFile.file("Connections.csv").async("blob");
+      if (!file) {
+        document.body.classList.remove('loading');
+        throw new Error("No Connections.csv file found in zip");
+      }
+    }
   
     const startingString =
       'Notes:\n"When exporting your connection data, you may notice that some of the email addresses are missing. You will only see email addresses for connections who have allowed their connections to see or download their email address using this setting https://www.linkedin.com/psettings/privacy/email. You can learn more here https://www.linkedin.com/help/linkedin/answer/261"\n\n';
@@ -60,4 +75,3 @@ document.querySelector("#import").addEventListener("change", (e) => {
       }
     });
   }
-  
