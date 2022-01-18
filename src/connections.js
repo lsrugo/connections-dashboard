@@ -1,3 +1,4 @@
+import papaparse from 'papaparse'
 import supabaseClient from './login.js'
 
 const queryState = {
@@ -157,6 +158,12 @@ async function loadConnections() {
     // disable next page if on last page
     document.querySelector('#next').disabled = res.data.length < queryState.pageSize
 
+    const exportButton = document.querySelector('#export');
+    exportButton.disabled = false;
+
+    // generate csv for download when export button is clicked
+    exportButton.addEventListener('click', exportCurrentView(res.data), { once: true });
+
     return res
 }
 
@@ -219,4 +226,34 @@ function replaceRows(rows, table) {
     tbody.replaceChildren('')
 
     rows.forEach((row, index) => insertRow(row, index, tbody))
+}
+
+/**
+ * create event listener to download current results as a CSV file
+ * @param {Array<any>} data the rows to be downloaded
+ * @returns {EventListener} event listener
+ */
+function exportCurrentView(data) {
+    return (e) => {
+        // remove id, created_at, user_id columns
+        const newData = data.map(row => {
+            delete row.id;
+            delete row.created_at;
+            delete row.user_id;
+            return row;
+        })
+
+        const csv = papaparse.unparse(newData);
+
+        // download csv file
+        const csvBlob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const csvUrl = URL.createObjectURL(csvBlob);
+        const downloadLink = document.createElement("a");
+        downloadLink.href = csvUrl;
+        downloadLink.download = "connections-export.csv";
+        downloadLink.click();
+        URL.revokeObjectURL(csvUrl);
+
+        e.target.disabled = true;
+    }
 }
