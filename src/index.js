@@ -6,6 +6,8 @@ supabaseClient.auth.onAuthStateChange(async (event) => {
     // TODO filter by date imported/created
     // supabase already filters by user
 
+    document.body.classList.add('loading');
+
     const countRes = await supabaseClient
       .from('connections')
       .select('id', { count: 'estimated', head: true })
@@ -13,6 +15,7 @@ supabaseClient.auth.onAuthStateChange(async (event) => {
     if (countRes.count === 0) {
       document.body.classList.add('new-user')
       console.log('no connections')
+      document.body.classList.remove('loading');
       return
     }
 
@@ -23,11 +26,11 @@ supabaseClient.auth.onAuthStateChange(async (event) => {
       createCompaniesList(),
     ]).then(() => {
       console.log('done')
-      document.body.classList.remove('loading')
     }).catch(err => {
       console.error(err);
       // document.querySelector('#message').textContent = err.message;
     })
+    .finally(() => document.body.classList.remove('loading'));
   }
 })
 

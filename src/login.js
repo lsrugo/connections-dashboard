@@ -6,10 +6,10 @@ const supabaseClient = supabase.createClient(API_URL, ANON_KEY);
 supabaseClient.auth.onAuthStateChange((event) => {
     console.log(event)
     if (event === "SIGNED_IN") {
-        document.querySelector('body').classList.add('logged-in')
+        document.querySelector('body').classList.add('logged-in');
     }
     if (event === "SIGNED_OUT") {
-        document.querySelector('body').classList.remove('logged-in')
+        document.querySelector('body').classList.remove('logged-in', 'new-user');
     }
 })
 
