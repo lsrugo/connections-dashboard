@@ -69,6 +69,7 @@ document.querySelector("#import").addEventListener("change", (e) => {
               console.error(res.error)
             } else {
               console.log('success', res.data)
+              window.location.reload();
             }
             document.body.classList.remove('loading')
           })
