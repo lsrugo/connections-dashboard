@@ -2,11 +2,23 @@
 @tailwind components;
 @tailwind utilities;
 
+/* hide login page if logged in */
 .logged-in .pre-login {
     display: none;
 }
 
+/* hide views which need login if not logged in */
 :not(.logged-in) > .login-required {
+    display: none;
+}
+
+/* show only onboarding elements for new user */
+.new-user > :not(.new-user-show) {
+    display: none;
+}
+
+/* hide onboarding elements if not new user */
+:not(.new-user) > .new-user-only {
     display: none;
 }
 
@@ -15,14 +27,17 @@ th, td {
     text-align: left;
 }
 
+/* hide <main> if loading */
 .loading > main {
     display: none;
 }
 
+/* hide cards if loading */
 .loading > div > #cards {
     display: none;
 }
 
+/* hide spinner if not loading */
 :not(.loading) > #spinner {
     display: none;
 }
@@ -37,15 +52,15 @@ th, td {
 
     -webkit-animation: sk-rotateplane 1.2s infinite ease-in-out;
     animation: sk-rotateplane 1.2s infinite ease-in-out;
-    }
+}
 
-    @-webkit-keyframes sk-rotateplane {
+@-webkit-keyframes sk-rotateplane {
     0% { -webkit-transform: perspective(120px) }
     50% { -webkit-transform: perspective(120px) rotateY(180deg) }
     100% { -webkit-transform: perspective(120px) rotateY(180deg)  rotateX(180deg) }
-    }
+}
 
-    @keyframes sk-rotateplane {
+@keyframes sk-rotateplane {
     0% { 
         transform: perspective(120px) rotateX(0deg) rotateY(0deg);
         -webkit-transform: perspective(120px) rotateX(0deg) rotateY(0deg) 
@@ -56,4 +71,4 @@ th, td {
         transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg);
         -webkit-transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg);
     }
-    }
+}

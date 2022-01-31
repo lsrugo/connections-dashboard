@@ -7,6 +7,11 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
     integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Catamaran:wght@500&display=swap" rel="stylesheet">
+
   <meta charset="UTF-8" />
 </head>
 
@@ -47,18 +52,28 @@
       <button type="submit"
         class="text-white text-sm font-semibold rounded-lg bg-blue-500 hover:bg-blue-700 px-4 py-3 shadow-lg cursor-pointer">
         <i class="fas fa-sign-in-alt mr-0.5"></i>
-        Login
+        Login / Register
       </button>
     </form>
   </section>
 
-  <section class="login-required flex absolute top-4 right-6 z-10">
+  <section class="login-required new-user-show flex absolute top-4 right-6 z-10">
     <label for="import"
       class="text-white text-sm font-semibold rounded-lg bg-blue-500 hover:bg-blue-700 px-4 py-3 shadow-lg cursor-pointer mr-2">
       <i class="fas fa-file-import mr-0.5"></i>
       Import
     </label>
     <input type="file" accept=".csv,text/csv,.zip,application/zip" id="import" hidden />
+  </section>
+
+  <section class="login-required new-user-show new-user-only absolute top-20 right-8 w-80 font-['Catamaran']">
+    <h4 class="text-2xl">
+      Welcome!
+    </h4>
+    <p class="text-lg">
+      Start by importing your contacts
+    </p>
+    <img src="/curved-up-arrow-svgrepo-com.svg" alt="curved up arrow" class="w-20 absolute top-3 right-3">
   </section>
 
   <div class="spinner bg-blue-200" id="spinner"></div>

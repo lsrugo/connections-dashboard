@@ -1,10 +1,20 @@
 /*global Chart, randomColor*/
 import supabaseClient from './login.js'
 
-supabaseClient.auth.onAuthStateChange((event) => {
+supabaseClient.auth.onAuthStateChange(async (event) => {
   if (event === "SIGNED_IN") {
     // TODO filter by date imported/created
     // supabase already filters by user
+
+    const countRes = await supabaseClient
+      .from('connections')
+      .select('id', { count: 'estimated', head: true })
+
+    if (countRes.count === 0) {
+      document.body.classList.add('new-user')
+      console.log('no connections')
+      return
+    }
 
     Promise.all([
       populateCards(),
